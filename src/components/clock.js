@@ -1,6 +1,4 @@
 import React from 'react'
-import { useSpring, animated } from 'react-spring'
-import { useDrag } from 'react-use-gesture'
 import AlloyFinger from './gesture'
 
 class Clock extends React.Component{
@@ -41,7 +39,7 @@ class Clock extends React.Component{
   render(){
     return(
       <div>
-        <p>{this.state.text}</p>
+        <p style={{color: "orange", fontSize: '30px'}}>{this.state.text}</p>
         A clock: {this.state.time.toLocaleTimeString()}
         <AlloyFinger onDoubleTap={this.changeTitle}>
           <div>
