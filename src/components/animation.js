@@ -1,30 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import styled from 'styled-components'
 import { useSpring, animated, config } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
+import {Container, Title, Button} from '../styled/animation'
 
-const style={
-  title:{
-    color: "red",
-    fontSize: "30px"
-  },
-  container: {
-    display: "flex",
-    alignItems: "center",
-    flexDirection: "column"
-  }
-
-}
-
-const Button = styled.button`
-  background-color: green;
-  color: white;
-  font-size: 20px;
-  opacity: 0.6;
-  :hover{
-    opacity: 1;
-  }
-`;
 
 
 function Simple(props) {
@@ -115,16 +93,16 @@ export default class Animation extends React.Component{
 
   render(){
     return(
-      <div style={style.container}>
-        <Button>Click me!</Button>
-        <p style={style.title} className="title">{this.state.text}</p>
+      <Container>
+        <Button >Click me!</Button>
+        <Title className="title">{this.state.text}</Title>
         A clock: {this.state.time.toLocaleTimeString()}
           <div onClick={this.onTap}>
             Hello this is a test for gesture.
           </div>
           <JumpTitle changeTitle={(e) => this.changeTitle('test', e)}/>
           <Simple />
-      </div>
+      </Container>
     )
   }
 }

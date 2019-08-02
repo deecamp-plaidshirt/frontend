@@ -18,7 +18,7 @@ const Button = styled.button`
     border-color: rgba(0,0,0,1);
   }
   :active{
-    box-shadow:inset 0 0.6em 2em -0.3em rgba(0,0,0,0.15),inset 0 0 0em 0.05em rgba(255,255,255,0.12);
+    box-shadow:inset 0 0.6em 2em -0.3em rgba(0,0,0,0.5),inset 0 0 0em 0.05em rgba(255,255,255,0.3);
   }
 `;
 
