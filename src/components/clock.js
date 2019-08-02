@@ -1,6 +1,20 @@
 import React from 'react'
 import AlloyFinger from './gesture'
-import '../style/clock.css'
+import {Button} from '../styled/styled'
+import styled from 'styled-components'
+
+const style = {
+  title: {
+    fontSize: "30px",
+    color: "blue"
+  }
+}
+// style={{backgroundColor: '#4e9af1', fontSize: '20px'}}
+const StyledButton = styled(Button)`
+  font-size: 20px;
+  background-color: ${props => props.warning ? 'red' : '#4e9af1'}
+
+`;
 
 class Clock extends React.Component{
   constructor(props){
@@ -40,13 +54,15 @@ class Clock extends React.Component{
   render(){
     return(
       <div>
-        <p className="title">{this.state.text}</p>
+        <p style={style.title} className="title">{this.state.text}</p>
         A clock: {this.state.time.toLocaleTimeString()}
         <AlloyFinger onDoubleTap={this.changeTitle}>
           <div>
             Hello this is a test for gesture.
           </div>
         </AlloyFinger>
+        <StyledButton >Styled Button</StyledButton>
+        <StyledButton warning>Warning Button</StyledButton>
 
       </div>
     )
