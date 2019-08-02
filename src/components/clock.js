@@ -1,5 +1,6 @@
 import React from 'react'
 import AlloyFinger from './gesture'
+import '../style/clock.css'
 
 class Clock extends React.Component{
   constructor(props){
@@ -39,7 +40,7 @@ class Clock extends React.Component{
   render(){
     return(
       <div>
-        <p style={{color: "orange", fontSize: '30px'}}>{this.state.text}</p>
+        <p className="title">{this.state.text}</p>
         A clock: {this.state.time.toLocaleTimeString()}
         <AlloyFinger onDoubleTap={this.changeTitle}>
           <div>
