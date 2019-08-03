@@ -157,6 +157,29 @@ const SContainer = styled(Container)`
   pointer-events: ${props => props.opened ? 'auto':'none' };
 `;
 
+const ASContainer = animated(SContainer)
+
+function Whole(props) {
+  const [{ xy }, set] = useSpring(() => ({ xy: [0, 0] }))
+
+  // 1. we define the drag gesture logic using the useDrag hook
+  const bind = useDrag(({ down, delta }) => {
+    set({ xy: down ? delta : [0, 0] })
+  })
+
+
+  return (
+    <ASContainer
+      // 2. we bind the result of the hook to our component
+      {...bind()}
+      style={{transform: xy.interpolate((x, y) => `translate3D(${x}px, ${y}px, 0)`),
+      }}
+    >
+      <button>Drag me!</button>
+    </ASContainer>
+  )
+}
+
 
 
 export default SContainer

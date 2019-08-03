@@ -1,43 +1,3 @@
-import React, {useState, useRef} from 'react';
-import './App.css';
-import clamp from 'lodash-es/clamp'
-import Clock from './components/clock'
-import Animation from './components/animation'
-import { useSprings, animated } from 'react-spring'
-import { useDrag } from 'react-use-gesture'
-import SDrawer from './components/drawer'
-import {Button } from './styled/styled'
-import styled from 'styled-components'
-import TakePhoto from './components/takephoto'
-import AlloyFinger from './components/gesture'
-
-
-const StyledButton = styled(Button)`
-  font-size: 20px;
-  width: 200px;
-  background-color: ${props => props.warning ? 'red' : '#4e9af1'}
-  background-color: ${props => props.primary ? 'green' : '#4e9af1'}
-
-`;
-
-
-function App(props) {
-  const toggle = ()=>{
-    props.openDrawer()
-  }
-
-  return (
-    <div className="App">
-      <SDrawer opened={props.opened?"open":undefined} toggle={toggle}/>
-      <h1 className="title">{props.text}</h1>
-      <StyledButton onClick={toggle}>Open Drawer</StyledButton>
-  <TakePhoto/>
-      {/*<Clock />
-      <Animation />*/}
-    </div>
-  );
-}
-
 const pages = [
   'https://images.pexels.com/photos/62689/pexels-photo-62689.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
   'https://images.pexels.com/photos/296878/pexels-photo-296878.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
@@ -48,19 +8,10 @@ const pages = [
 
 function Viewpager(prop) {
   const index = useRef(0)
-  const [open, setopen] = useState(false)
-
-  const openDrawer = ()=>{
-    //console.log("open Drawer")
-    setopen(!open)
-  }
-
   const [props, set] = useSprings(pages.length, i => ({ x: i * window.innerWidth, sc: 1, display: 'block' }))
   const bind = useDrag(({ down, delta: [xDelta], direction: [xDir], distance, cancel }) => {
-    //console.log(distance)
-    if(distance >= window.innerWidth/2 && xDir === 1){
-      openDrawer()
-    }
+    console.log(down  )
+    console.log(distance)
     if (down && distance > window.innerWidth / 2)
       cancel((index.current = clamp(index.current + (xDir > 0 ? -1 : 1), 0, pages.length - 1)))
     set(i => {
@@ -70,9 +21,15 @@ function Viewpager(prop) {
       return { x, sc, display: 'block' }
     })
   })
+  /*
+  return props.map(({ x, display, sc }, i) => (
+    <animated.div className={prop.className} {...bind()} key={i} style={{ display, transform: x.interpolate(x => `translate3d(${x}px,0,0)`) }}>
+      <animated.div style={{ transform: sc.interpolate(s => `scale(${s})`), backgroundImage: `url(${pages[i]})` }} />
+    </animated.div>
+  ))*/
   return(
     <animated.div className={prop.className} {...bind()} >
-      <App openDrawer={openDrawer} opened={open}/>
+      
     </animated.div>
   )
 }
@@ -80,12 +37,18 @@ function Viewpager(prop) {
 const SView = styled(Viewpager)`
   position: absolute;
   width: 100vw;
-  height: 100vh;
-  top: 0vh;
+  height: 50vh;
+  top: 50vh;
   will-change: transform;
-  z-index: 1000;
   
+  div{
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+    box-shadow: 0 62.5px 125px -25px rgba(50, 50, 73, 0.5), 0 37.5px 75px -37.5px rgba(0, 0, 0, 0.6);
+  }  
 
 `;
-
-export default SView;
