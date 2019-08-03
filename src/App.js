@@ -54,21 +54,17 @@ function Viewpager(prop) {
     //console.log("open Drawer")
     setopen(!open)
   }
-
-  const [props, set] = useSprings(pages.length, i => ({ x: i * window.innerWidth, sc: 1, display: 'block' }))
-  const bind = useDrag(({ down, delta: [xDelta], direction: [xDir], distance, cancel }) => {
-    //console.log(distance)
-    if(distance >= window.innerWidth/2 && xDir === 1){
+  const changtext = ()=>{
+    settext("fdads")
+  }
+  const [text, settext] = useState("hello")
+  const bind = useDrag(({ down, direction: [xDir], distance, cancel }) => {
+    console.log(distance)
+    console.log(xDir)
+    if(down && distance >= window.innerWidth/6 && xDir > 0){
       openDrawer()
+      console.log('distance')
     }
-    if (down && distance > window.innerWidth / 2)
-      cancel((index.current = clamp(index.current + (xDir > 0 ? -1 : 1), 0, pages.length - 1)))
-    set(i => {
-      if (i < index.current - 1 || i > index.current + 1) return { display: 'none' }
-      const x = (i - index.current) * window.innerWidth + (down ? xDelta : 0)
-      const sc = down ? 1 - distance / window.innerWidth / 2 : 1
-      return { x, sc, display: 'block' }
-    })
   })
   return(
     <animated.div className={prop.className} {...bind()} >
