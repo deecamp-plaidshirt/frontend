@@ -4,20 +4,27 @@ import clamp from 'lodash-es/clamp'
 import Clock from './components/clock'
 import Animation from './components/animation'
 import { useSprings, animated } from 'react-spring'
+import { BrowserRouter as Router, Route, Link } from "react-router-dom"
 import { useDrag } from 'react-use-gesture'
 import SDrawer from './components/drawer'
 import {Button } from './styled/styled'
 import styled from 'styled-components'
 import TakePhoto from './components/takephoto'
-import AlloyFinger from './components/gesture'
+import Canvas from './components/canvas'
 
 
 const StyledButton = styled(Button)`
   font-size: 20px;
-  width: 200px;
+  width: 50px;
+  height: 50px;
   background-color: ${props => props.warning ? 'red' : '#4e9af1'}
   background-color: ${props => props.primary ? 'green' : '#4e9af1'}
-
+  position: fixed;
+  left: 2vw;
+  top: 3vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 
@@ -29,9 +36,10 @@ function App(props) {
   return (
     <div className="App">
       <SDrawer opened={props.opened?"open":undefined} toggle={toggle}/>
-      <h1 className="title">{props.text}</h1>
-      <StyledButton onClick={toggle}>Open Drawer</StyledButton>
-  <TakePhoto/>
+      <h1 className="title">ALINE</h1>
+      <StyledButton onClick={toggle}><span>O</span></StyledButton>
+      {/*<Canvas/>*/}
+      <TakePhoto/>
       {/*<Clock />
       <Animation />*/}
     </div>
@@ -54,10 +62,6 @@ function Viewpager(prop) {
     //console.log("open Drawer")
     setopen(!open)
   }
-  const changtext = ()=>{
-    settext("fdads")
-  }
-  const [text, settext] = useState("hello")
   const bind = useDrag(({ down, direction: [xDir], distance, cancel }) => {
     console.log(distance)
     console.log(xDir)

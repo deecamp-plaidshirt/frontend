@@ -2,6 +2,8 @@ import {Button } from '../styled/styled'
 import styled from 'styled-components'
 import React, {useState} from 'react'
 import {Upload} from 'antd'
+import {get, post} from '../utils/api'
+
 
 
 const StyledUpload = styled.div`
@@ -31,27 +33,46 @@ const StyledUpload = styled.div`
 `;
 
 const Img = styled.img`
-  width: 400px;
-  height: 400px;
+  width: 90vw;
+  height: 75vh;
   object-fit: contain;
+  margin-bottom: 30px;
 `;
 
 function TakePhoto(props){
+  const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
 
   const [url, setUrl] = useState("")
   const handleChange = ()=>{
     console.log("photo")
   }
 
-  const uploadFile = ({file})=>{
+  const uploadFile = async ({file})=>{
     let tmp = URL.createObjectURL(file)
     setUrl(tmp)
     console.log(tmp)
+    
+    //const res = await get('http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/')
+    //console.log(res)
     //URL.revokeObjectURL(tmp)
+
+    //let file = e.target.files[0];           
+    let param = new FormData(); //创建form对象
+    param.append('file',file);//通过append向form对象添加数据
+    param.append('chunk','0');//添加form表单中其他数据
+    console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
+    /*
+    const res = await post(base_url+'img', param, {
+      headers:{'Content-Type':'multipart/form-data'}
+    })
+    console.log(res)
+    */
+
   }
 
   return(
     <div className={props.className}>
+      <Img src={url} alt="" id="show-picture"></Img>
       <Upload 
         onChange={handleChange}
         showUploadList={false}
@@ -59,7 +80,6 @@ function TakePhoto(props){
       >
         <StyledUpload primary>Upload</StyledUpload>
       </Upload>
-      <Img src={url} alt="" id="show-picture"></Img>
     </div>
   )
 }
