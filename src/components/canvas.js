@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import styled from 'styled-components'
-import { Stage, Layer, Rect, Text, Circle, Image } from 'react-konva';
+import { Stage, Layer, Rect, Text, Circle, Image, Group } from 'react-konva';
 import Konva from 'konva';
 
 
@@ -35,11 +35,12 @@ function FRect(props){
 function Canvas(props){
 
   let circle;
-  let lastDist = 0;
-  let layer;
+  let group//, setGroup] = useState(undefined);
+  let [lastDist, setLastDis] = useState(0);
+  let [layer, setLayer] = useState(undefined);
   let imageNode;
   let [img, setimg] = useState("")
-  let last_pos = [0, 0];
+  let distance = [0, 0];
 
   const touchend = ()=>{
     lastDist = 0
@@ -56,14 +57,11 @@ function Canvas(props){
   const [activate, setactivate] = useState(true)
   const [stroke, setstroke] = useState("black")
   const [opacity, setopacity] = useState(1)
+  const [last_pos, setlast_pos] = useState([0, 0])
   let [strokeWidth, setstrokeWidth] = useState(10)
 
   const getDistance = (p1, p2) => {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-  }
-
-  const handleClick = () => {
-    setcolor(Konva.Util.getRandomColor())
   }
 
   const canMove = ()=>{
@@ -73,101 +71,94 @@ function Canvas(props){
   }
 
   const touchscale = (e) =>{
-    //console.log(e)
-    
     const evt = e.evt
-    //console.log("tapped")
-    
-      let touch1 = evt.touches[0];
-      let touch2 = evt.touches[1];
-  
-      if (touch1 && touch2) {
-        var dist = getDistance(
-          {
-            x: touch1.clientX,
-            y: touch1.clientY
-          },
-          {
-            x: touch2.clientX,
-            y: touch2.clientY
-          }
-        );
-  
-        if (!lastDist) {
-          lastDist = dist;
+    let touch1 = evt.touches[0];
+    let touch2 = evt.touches[1];
+
+    if (touch1 && touch2) {
+      var dist = getDistance(
+        {
+          x: touch1.clientX,
+          y: touch1.clientY
+        },
+        {
+          x: touch2.clientX,
+          y: touch2.clientY
         }
-  
-        var scale = (imageNode.scaleX() * dist) / lastDist;
-        console.log(scale)
-        imageNode.scaleX(scale);
-        imageNode.scaleY(scale);
-        circle.scaleX(scale);
-        circle.scaleY(scale);
-        layer.draw();
-        lastDist = dist;
+      );
+
+      if (!lastDist) {
+        setLastDis(dist);
       }
+
+      var scale = (group.scaleX() * dist) / lastDist;
+      //imageNode.scaleX(scale);
+      //imageNode.scaleY(scale);
+      //circle.scaleX(scale);
+      //circle.scaleY(scale);
+      group.scaleX(scale)
+      group.scaleY(scale)
+      setLastDis(dist);
+    }
   }
 
   const dragmove = (e)=>{
-    console.log(e)
+    //console.log(e)
     let x = imageNode.attrs.x, y = imageNode.attrs.y;
-    let mx = x-last_pos[0], my = y - last_pos[1];
-    console.log(circle)
-    circle.setAttrs({
-      x: x + mx,
-      y: y + my
-    })
-    console.log(mx, my);
+    let mx = x - last_pos[0], my = y - last_pos[1];
+    circle.setX(circle.attrs.x + mx)
+    circle.setY(circle.attrs.y + my)
+    setlast_pos([x, y])
   }
 
   const dragend = (e)=>{
-    last_pos = [e.evt.clientX, e.evt.clientY];
+    console.log("drag end")
   }
 
+  //onTouchMove={touchscale}
+  //onTouchEnd={touchend}
   return(
     <Stage 
       width={window.innerWidth*0.95} 
       height={window.innerHeight*0.75}
       className={props.className}
-      onTouchMove={touchscale}
-      onTouchEnd={touchend}
     >
-    <Layer 
-      ref={node => layer=node }
-    >
-      
-      <Image
-        x={0}
-        y={0}
-        image={img}
-        ref={node => {
-          imageNode = node;
-        }}
-        stroke={stroke}
-        strokeWidth={strokeWidth}
-        opacity={opacity}
-        draggable={activate}
-        onDblTap={canMove}
-        onTouchMove={touchscale}
-        onTouchEnd={touchend}
-        onDragMove={dragmove}
-        onDragEnd={dragend}
-      />  
-      <Circle
-        ref={ node =>
-          circle = node
-        }
-        radius={30}
-        fill="green"
-        draggable
-        stroke='black'
-        x={0}
-        y={0}
-        zIndex={10}
-      />
-    </Layer>
-  </Stage>
-
+      <Layer 
+        ref={node => setLayer(node) }
+      >
+        <Group
+          ref={node => group = node }
+          onTouchMove={touchscale}
+          onTouchEnd={touchend}
+          opacity={opacity}
+          draggable={activate}
+          onDblTap={canMove}
+        >
+          <Image
+            image={img}
+            ref={node => {
+              imageNode = node;
+            }}
+            stroke={stroke}
+            strokeWidth={strokeWidth}
+            opacity={opacity}
+            //draggable={activate}
+            //onDblTap={canMove}
+            //onDragMove={dragmove}
+            //onDragEnd={dragend}
+          />
+          <Circle
+            ref={ node =>
+              circle = node
+            }
+            radius={30}
+            fill="green"
+            //draggable
+            stroke='black'
+          />
+        </Group>
+      </Layer>
+    </Stage>
   )
 }
 
