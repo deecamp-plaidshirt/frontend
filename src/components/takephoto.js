@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import React, {useState} from 'react'
 import {Upload} from 'antd'
 import {get, post} from '../utils/api'
-import Canvas from './canvas'
+import Canvas from './newcanvas'
 
 
 
