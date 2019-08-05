@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import React, {useState} from 'react'
 import {Upload} from 'antd'
 import {get, post} from '../utils/api'
+import Canvas from './canvas'
 
 
 
@@ -13,7 +14,7 @@ const StyledUpload = styled.div`
   background-color: ${props => props.primary ? 'green' : '#4e9af1'}
   display:inline-block;
   padding:0.3em 1.2em;
-  margin:0 0.1em 0.1em 0;
+  margin:1vh 0.1em 0.1em 0;
   border:0.16em solid rgba(255,255,255,0);
   border-radius:0.5em;
   box-sizing: border-box;
@@ -43,6 +44,7 @@ function TakePhoto(props){
   const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
 
   const [url, setUrl] = useState("")
+  let [image, setImage] = useState("")
   const handleChange = ()=>{
     console.log("photo")
   }
@@ -56,6 +58,9 @@ function TakePhoto(props){
     //console.log(res)
     //URL.revokeObjectURL(tmp)
 
+    let tmpimg = new window.Image();
+    tmpimg.src = tmp;
+    setImage(tmpimg)
     //let file = e.target.files[0];           
     let param = new FormData(); //创建form对象
     param.append('file',file);//通过append向form对象添加数据
@@ -69,10 +74,10 @@ function TakePhoto(props){
     */
 
   }
-
+//"https://cdn.pixabay.com/photo/2016/06/18/17/42/image-1465348_960_720.jpg"
   return(
     <div className={props.className}>
-      <Img src={url} alt="" id="show-picture"></Img>
+      <Canvas img_url={url}/>
       <Upload 
         onChange={handleChange}
         showUploadList={false}

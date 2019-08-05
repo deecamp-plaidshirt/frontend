@@ -11,6 +11,7 @@ import {Button } from './styled/styled'
 import styled from 'styled-components'
 import TakePhoto from './components/takephoto'
 import Canvas from './components/canvas'
+import {withRouter} from 'react-router-dom'
 
 
 const StyledButton = styled(Button)`
@@ -27,6 +28,7 @@ const StyledButton = styled(Button)`
   align-items: center;
 `;
 
+//const SDrawerWithRouter = withRouter(SDrawer)
 
 function App(props) {
   const toggle = ()=>{
@@ -34,25 +36,22 @@ function App(props) {
   }
 
   return (
-    <div className="App">
-      <SDrawer opened={props.opened?"open":undefined} toggle={toggle}/>
-      <h1 className="title">ALINE</h1>
-      <StyledButton onClick={toggle}><span>O</span></StyledButton>
-      {/*<Canvas/>*/}
-      <TakePhoto/>
-      {/*<Clock />
-      <Animation />*/}
-    </div>
+      <div className="App">
+        <Router>
+          <SDrawer opened={props.opened?"open":undefined} toggle={toggle}/>
+          <h1 className="title">ALINE</h1>
+          <StyledButton onClick={toggle}><span>O</span></StyledButton>
+          {/*<Canvas/>*/}
+          <Route exact path="/" component={TakePhoto} />
+          <Route path="/clock" component={Clock} />
+          <Route path="/animation" component={Animation} />
+          <Route path="/canvas" component={Canvas} />
+        </Router>
+      </div>
+
   );
 }
 
-const pages = [
-  'https://images.pexels.com/photos/62689/pexels-photo-62689.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-  'https://images.pexels.com/photos/296878/pexels-photo-296878.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-  'https://images.pexels.com/photos/1509428/pexels-photo-1509428.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-  'https://images.pexels.com/photos/351265/pexels-photo-351265.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-  'https://images.pexels.com/photos/924675/pexels-photo-924675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260'
-]
 
 function Viewpager(prop) {
   const index = useRef(0)
@@ -63,11 +62,11 @@ function Viewpager(prop) {
     setopen(!open)
   }
   const bind = useDrag(({ down, direction: [xDir], distance, cancel }) => {
-    console.log(distance)
-    console.log(xDir)
+    //console.log(distance)
+    //console.log(xDir)
     if(down && distance >= window.innerWidth/6 && xDir > 0){
-      openDrawer()
-      console.log('distance')
+      //openDrawer()
+      //console.log('distance')
     }
   })
   return(

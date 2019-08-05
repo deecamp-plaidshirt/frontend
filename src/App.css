@@ -18,8 +18,8 @@
 }
 h1{
     margin: 0;
-    margin-bottom: 30px;
-    margin-top: 30px;
+    margin-top: 5vh;
+    font-size: 5vh;
 }
 
 @keyframes App-logo-spin {

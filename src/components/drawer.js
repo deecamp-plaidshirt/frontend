@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {animated, useSpring} from 'react-spring'
 import {useDrag} from 'react-use-gesture'
 import styled from 'styled-components'
-
+import {withRouter} from 'react-router-dom'
 
 const Title = styled.h3`
   color: #666;
@@ -46,16 +46,21 @@ const SHeader = styled(Header)`
 
 `;
 
+
+
 function DrawerItem(props){
 
-  const clicked = (e)=>{
+  const clicked = (link, e)=>{
+    //console.log(link)
     e.stopPropagation()
     //console.log("item clicked")
     props.clicked()
+    //console.log(props)
+    props.history.push(link)
   }
 
   return(
-    <div onClick={clicked} className={props.className}>
+    <div onClick={(e)=>clicked(props.link, e)} className={props.className}>
       <Title>{props.title}</Title>
       <Content>{props.content}</Content>
     </div>
@@ -79,19 +84,28 @@ const SDrawerItem = styled(DrawerItem)`
 
 const DrawerItems = [
   {
+    title: "Main Page",
+    contnet: "go back to main page",
+    link: "/"
+  },
+  {
     title: "我的错题",
-    contnet: "记录所有的错误题目"
+    contnet: "记录所有的错误题目",
+    link: "/clock"
   },
   {
     title: "学习记录",
-    contnet: "记录所有的题目"
+    contnet: "记录所有的题目",
+    link: "/animation"
   },
   {
     title: "我的设置",
-    contnet: "进行应用设置"
+    contnet: "进行应用设置",
+    link: "/canvas"
   }
 ]
 
+const RSDrawerItem = withRouter(SDrawerItem)
 
 function Drawer(props){
   // drawer function component
@@ -115,7 +129,7 @@ function Drawer(props){
       {
         DrawerItems.map((item, index)=>{
           return(
-            <SDrawerItem clicked={toggle} title={item.title} content={item.contnet} key={item.title}></SDrawerItem>
+            <RSDrawerItem clicked={toggle} link={item.link} title={item.title} content={item.contnet} key={item.title}></RSDrawerItem>
           )
         })
       }
