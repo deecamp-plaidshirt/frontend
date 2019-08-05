@@ -126,6 +126,7 @@ class Canvas extends React.Component{
                     fill="green"
                     key={val}
                     onClick={this.showCard}
+                    onTap={this.showCard}
                   />
                 )
               })
