@@ -22,6 +22,11 @@ h1{
     font-size: 5vh;
 }
 
+.route{
+    height: 100%;
+    width: 100%;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

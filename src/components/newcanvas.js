@@ -82,6 +82,7 @@ class Canvas extends React.Component{
       radius: Math.random()*10 + 20,
       duration: 0.2
     });
+    this.props.toggle(`${e.target.attrs.x}-${e.target.attrs.y}-${e.target.attrs.radius}`)
     console.log("show card")
 
   }

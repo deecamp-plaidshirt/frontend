@@ -7,6 +7,7 @@ import { useSprings, animated } from 'react-spring'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom"
 import { useDrag } from 'react-use-gesture'
 import SDrawer from './components/drawer'
+import DDrawer from './components/carddrawer'
 import {Button } from './styled/styled'
 import styled from 'styled-components'
 import TakePhoto from './components/takephoto'
@@ -35,6 +36,7 @@ function App(props) {
   const toggle = ()=>{
     props.openDrawer()
   }
+//          <SDrawer opened={props.opened?"open":undefined} toggle={toggle}/>
 
   return (
       <div className="App">
@@ -43,10 +45,10 @@ function App(props) {
           <h1 className="title">ALINE</h1>
           <StyledButton left onClick={toggle}><span>O</span></StyledButton>
           {/*<Canvas/>*/}
-          <Route exact path="/" component={TakePhoto} />
-          <Route path="/clock" component={Clock} />
-          <Route path="/animation" component={Animation} />
-          <Route path="/canvas" component={Canvas} />
+          <Route className="route" exact path="/" component={TakePhoto} />
+          <Route className="route" path="/clock" component={Clock} />
+          <Route className="route" path="/animation" component={Animation} />
+          <Route className="route" path="/canvas" component={Canvas} />
         </Router>
       </div>
 

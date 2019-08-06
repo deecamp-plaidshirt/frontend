@@ -4,6 +4,7 @@ import React, {useState} from 'react'
 import {Upload} from 'antd'
 import {get, post} from '../utils/api'
 import Canvas from './newcanvas'
+import DDrawer from './carddrawer'
 
 
 
@@ -40,6 +41,11 @@ const Img = styled.img`
   margin-bottom: 30px;
 `;
 
+const SDDrawer = styled(DDrawer)`
+  width: 90%;
+  height: 100%;
+`
+
 function TakePhoto(props){
   const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
 
@@ -75,10 +81,30 @@ function TakePhoto(props){
     */
 
   }
+  const [open, setopen] = useState(false)
+  const [content, setcontent] = useState("hello drawer")
+  const [fopen, setfopen] = useState(false)
+
+  const toggle = (content)=>{
+    openDrawer(content)
+  }
+
+  const openDrawer = (content)=> {
+    setopen(!open)
+    setcontent(content)
+    setfopen(false)
+  }
+
+  const fullopen = ()=>{
+    console.log("fullopen")
+    setfopen(!fopen)
+  }
+
 //"https://cdn.pixabay.com/photo/2016/06/18/17/42/image-1465348_960_720.jpg"
   return(
     <div className={props.className}>
-      <Canvas img_url={url}/>
+      <SDDrawer fullopen={fullopen} content={content} fopened={fopen?"fopen":undefined} opened={open?"open":undefined} toggle={toggle}/>
+      <Canvas toggle={toggle} img_url={url}/>
       <Upload 
         onChange={handleChange}
         showUploadList={false}
@@ -93,6 +119,8 @@ function TakePhoto(props){
 const STakePhoto = styled(TakePhoto)`
   display: flex;
   flex-direction: column;
+  height: 100%;
+  width: 90%;
 `;
 
 export default STakePhoto;
