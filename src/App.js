@@ -21,7 +21,8 @@ const StyledButton = styled(Button)`
   background-color: ${props => props.warning ? 'red' : '#4e9af1'}
   background-color: ${props => props.primary ? 'green' : '#4e9af1'}
   position: fixed;
-  left: 2vw;
+  left: ${props=>props.left? '2vw': null};
+  right: ${props=>props.left? null : '2vw'};
   top: 3vh;
   display: flex;
   justify-content: center;
@@ -40,7 +41,7 @@ function App(props) {
         <Router>
           <SDrawer opened={props.opened?"open":undefined} toggle={toggle}/>
           <h1 className="title">ALINE</h1>
-          <StyledButton onClick={toggle}><span>O</span></StyledButton>
+          <StyledButton left onClick={toggle}><span>O</span></StyledButton>
           {/*<Canvas/>*/}
           <Route exact path="/" component={TakePhoto} />
           <Route path="/clock" component={Clock} />

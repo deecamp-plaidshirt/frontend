@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Stage, Layer, Circle, Image, Group } from 'react-konva';
+import { Stage, Layer, Circle, Image, Group, Rect } from 'react-konva';
 
 
 class Canvas extends React.Component{
@@ -11,7 +11,9 @@ class Canvas extends React.Component{
       lastDist: 0,
       activate: true,
       opacity: 1,
-      img: ""
+      img: "",
+      imgw: 0,
+      imgh: 0,
     }
   }
 
@@ -34,9 +36,28 @@ class Canvas extends React.Component{
   }
   handleLoad = () => {
     this.setState({
-      img: this.image
+      img: this.image,
+      imgw: this.image.width,
+      imgh: this.image.height
     });
+    console.log(this.image.width, this.image.height)
+    this.fitStage()
   };
+
+  fitStage = ()=> {
+    console.log(this.group.width(), this.group.height())
+    let grpw = this.group.width(), grph = this.group.height()
+    let scale = 1
+    if(this.state.imgw > this.state.imgh){
+      scale =  grpw / this.state.imgw
+    }
+    else{
+      scale = grph / this.state.imgh
+    }
+    this.group.scaleX(scale)
+    this.group.scaleY(scale)
+
+  }
 
   touchend = ()=>{
     this.setState({lastDist: 0})
@@ -66,31 +87,33 @@ class Canvas extends React.Component{
   }
 
   touchscale = (e) =>{
-    const evt = e.evt
-    let touch1 = evt.touches[0];
-    let touch2 = evt.touches[1];
+    if(!this.state.activate){
+      const evt = e.evt
+      let touch1 = evt.touches[0];
+      let touch2 = evt.touches[1];
 
-    if (touch1 && touch2) {
-      var dist = this.getDistance(
-        {
-          x: touch1.clientX,
-          y: touch1.clientY
-        },
-        {
-          x: touch2.clientX,
-          y: touch2.clientY
+      if (touch1 && touch2) {
+        var dist = this.getDistance(
+          {
+            x: touch1.clientX,
+            y: touch1.clientY
+          },
+          {
+            x: touch2.clientX,
+            y: touch2.clientY
+          }
+        );
+
+        if (!this.state.lastDist) {
+          this.setState({lastDist: dist})
         }
-      );
 
-      if (!this.state.lastDist) {
+        var scale = (this.group.scaleX() * dist) / this.state.lastDist;
+        this.group.scaleX(scale)
+        this.group.scaleY(scale)
         this.setState({lastDist: dist})
+        this.layer.draw()
       }
-
-      var scale = (this.group.scaleX() * dist) / this.state.lastDist;
-      this.group.scaleX(scale)
-      this.group.scaleY(scale)
-      this.setState({lastDist: dist})
-      this.layer.draw()
     }
   }
 
@@ -102,13 +125,17 @@ class Canvas extends React.Component{
         className={this.props.className}
       >
         <Layer 
+          width={window.innerWidth*0.95} 
+          height={window.innerHeight*0.75}
           ref={node => this.layer = node }
         >
           <Group
+            width={window.innerWidth*0.95} 
+            height={window.innerHeight*0.75}
             ref={node => this.group = node}
             onTouchMove={this.touchscale}
             onTouchEnd={this.touchend}
-            onDblTap={this.canMove}
+            //onDblTap={this.canMove}
             opacity={this.state.opacity}
             draggable={this.state.activate}
           >
@@ -137,6 +164,15 @@ class Canvas extends React.Component{
               //draggable
             />
           </Group>
+          <Rect
+            x={10}
+            y={10}
+            width={50}
+            height={50}
+            onTap={this.canMove}
+            onClick={this.canMove}
+            fill='red'
+          />
         </Layer>
       </Stage>
     )

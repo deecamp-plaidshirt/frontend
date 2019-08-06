@@ -126,6 +126,7 @@ function Canvas(props){
       <Layer 
         ref={node => setLayer(node) }
       >
+
         <Group
           ref={node => group = node }
           onTouchMove={touchscale}

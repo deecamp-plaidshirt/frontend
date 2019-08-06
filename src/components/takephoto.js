@@ -50,6 +50,7 @@ function TakePhoto(props){
   }
 
   const uploadFile = async ({file})=>{
+    //console.log(file)
     let tmp = URL.createObjectURL(file)
     setUrl(tmp)
     console.log(tmp)
