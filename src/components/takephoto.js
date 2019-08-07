@@ -42,7 +42,7 @@ const Img = styled.img`
 `;
 
 const SDDrawer = styled(DDrawer)`
-  width: 90%;
+  width: 100%;
   height: 100%;
 `
 
@@ -119,8 +119,10 @@ function TakePhoto(props){
 const STakePhoto = styled(TakePhoto)`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   height: 100%;
-  width: 90%;
+  width: 100%;
 `;
 
 export default STakePhoto;

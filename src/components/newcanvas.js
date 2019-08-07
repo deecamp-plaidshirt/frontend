@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import EXIF from 'exif-js';
 import { Stage, Layer, Circle, Image, Group, Rect } from 'react-konva';
 
 
@@ -34,6 +35,13 @@ class Canvas extends React.Component{
     this.image.src = this.props.img_url;
     this.image.addEventListener('load', this.handleLoad);
   }
+  checkRotation = ()=> {
+    console.log("check rotation")
+    EXIF.getData(this.imgEle, () => { 
+      console.log(EXIF.getTag(this.imgEle, 'Orientation'))
+    })
+  }
+
   handleLoad = () => {
     this.setState({
       img: this.image,
@@ -41,6 +49,7 @@ class Canvas extends React.Component{
       imgh: this.image.height
     });
     console.log(this.image.width, this.image.height)
+    this.checkRotation()
     this.fitStage()
   };
 
@@ -121,8 +130,8 @@ class Canvas extends React.Component{
   render(){
     return(
       <Stage 
-        width={window.innerWidth*0.95} 
-        height={window.innerHeight*0.75}
+        width={window.innerWidth*0.9} 
+        height={window.innerHeight*0.7}
         className={this.props.className}
       >
         <Layer 
@@ -143,6 +152,7 @@ class Canvas extends React.Component{
             <Image
               image={this.state.img}
               opacity={this.state.opacity}
+              ref={node => this.imgEle = node }
             />
             {
               [100, 200, 300, 400].map((val, index) =>{
@@ -182,6 +192,7 @@ class Canvas extends React.Component{
 
 const SCanvas = styled(Canvas)`
   border: solid thin black;
+  width: 90%;
 `;
 
 

@@ -145,7 +145,7 @@ const SDrawer = styled(Drawer)`
   height: 100vh;
   transition: 0.5s;
   z-index: 500;
-  transform: translateY(${props => props.opened ?props.fopened?'-100vh' :'-50vh' : '0'})
+  transform: translateY(${props => props.opened ?props.fopened?'-90vh' :'-50vh' : '0'})
 `;
 
 function Container(props){

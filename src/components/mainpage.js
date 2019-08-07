@@ -1,4 +1,4 @@
-import {Button } from '../styled/styled'
+import {StyledButton } from '../styled/styled'
 import styled from 'styled-components'
 import React, {useState} from 'react'
 import {Upload} from 'antd'
@@ -8,6 +8,7 @@ import logo_img from '../resources/logo.png'
 import read_img from '../resources/reading.png'
 import env_img from '../resources/env.png'
 import line_img from '../resources/line.png'
+import up_mask from '../resources/upmask.png'
 
 const Header = styled(function Head(props){
   return(
@@ -94,7 +95,81 @@ const envs = [
   }
 ]
 
+const envMask = styled((props)=>{
+  return(
+    <div className={props.className}>
+      {props.children}
+    </div>
+  )
+})`
+
+
+`;
+
+const WaitingMask = styled((props)=>{
+
+  const cancel = ()=>{
+    props.cancel()
+  }
+
+  return(
+    <div className={props.className}>
+      <img id="upmask" src={up_mask} alt="uplaodmask"></img>
+      <img id="load-img" alt="uploaded"></img>
+      <div>
+        <StyledButton onClick={cancel}>翻译</StyledButton>
+        <StyledButton primary onClick={cancel}>批改</StyledButton>
+      </div>
+    </div>
+  )
+})`
+  position: fixed;
+  width: 100%;
+  height:100%;
+  z-index:100;
+  background-color:rgba(100, 100, 100, ${props=>props.uploading?0.6:0});
+  display:${props=>props.uploading?'flex':'none'};
+  flex-direction: column;
+  align-items:center;
+  justify-content: center;
+  opacity: 1
+
+  #upmask{
+    width: 80%;
+    height: auto;
+    position: fixed;
+    z-index: 105;
+    object-fit: contain;
+  }
+
+  #load-img{
+    width: 80%;
+    height: 70%;
+    background-color: white;
+    opacity: 1
+    border-radius: 1rem;
+    box-shadow: 0.5rem 0.5rem 2.5rem 1rem rgba(80, 80, 80, 0.6)
+  }
+  div{
+    width: 100%;
+    height: auto;
+    display:flex;
+    margin-top: 1rem;
+    flex-direction: row;
+    align-items:center;
+    justify-content: space-around;
+    opacity: 1
+  }
+  div > div{
+    width: 40%;
+  }
+`;
+
 const Envs = styled((props)=>{
+
+  const openCard = (content)=>{
+    props.toggle(content)
+  }
 
   return(
     <div className={props.className}>
@@ -102,7 +177,7 @@ const Envs = styled((props)=>{
         props.envs && props.envs.map((item, index)=>{
           return(
             <div key={item.off_x}>
-              <img style={{
+              <img onClick={()=>openCard(item.content)} style={{
                 transform: `translateX(${item.off_x}rem) rotate(${item.rotate}deg)`,
                 width: `${item.w}rem`,
                 height: `${item.h}rem`,
@@ -131,7 +206,7 @@ const Envs = styled((props)=>{
   img{
     object-fit: contain;
     width: 100vw;
-    height: 15vh;
+    height: auto;
     transform: translateY(-3rem);
   }
 `;
@@ -170,7 +245,7 @@ const Img = styled.img`
 `;
 
 const SDDrawer = styled(DDrawer)`
-  width: 90%;
+  width: 100%;
   height: 100%;
 `
 
@@ -180,10 +255,12 @@ function MainPage(props){
   const [url, setUrl] = useState("")
   let [image, setImage] = useState("")
   const handleChange = ()=>{
+    
     console.log("photo")
   }
 
   const uploadFile = async ({file})=>{
+    cancel()
     //console.log(file)
     let tmp = URL.createObjectURL(file)
     setUrl(tmp)
@@ -212,6 +289,7 @@ function MainPage(props){
   const [open, setopen] = useState(false)
   const [content, setcontent] = useState("hello drawer")
   const [fopen, setfopen] = useState(false)
+  const [uploading, setuploading] = useState(false)
 
   const toggle = (content)=>{
     openDrawer(content)
@@ -228,18 +306,25 @@ function MainPage(props){
     setfopen(!fopen)
   }
 
+  const cancel = ()=>{
+    setuploading(!uploading)
+  }
+
 //"https://cdn.pixabay.com/photo/2016/06/18/17/42/image-1465348_960_720.jpg"
   return(
     <div className={props.className}>
+      <SDDrawer fullopen={fullopen} content={content} fopened={fopen?"fopen":undefined} opened={open?"open":undefined} toggle={toggle}/>
+      <WaitingMask uploading={uploading} cancel={cancel}/>
       <Header/>
-      <Envs envs={envs}/>
+      <Envs toggle={toggle} envs={envs}/>
       <div id="upload">
         <Upload 
+          
           onChange={handleChange}
           showUploadList={false}
           customRequest={uploadFile}
         >
-          <StyledUpload primary>拍照</StyledUpload>
+          <StyledUpload onClick={cancel} primary>拍照</StyledUpload>
         </Upload>
       </div>
 

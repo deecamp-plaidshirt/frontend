@@ -9,7 +9,7 @@ import one from '../resources/one.png'
 import two from '../resources/two.png'
 import three from '../resources/three.png'
 import four from '../resources/four.png'
-import five from '../resources/five.png'
+import five from '../resources/home.png'
 
 const Title = styled.h3`
   color: #666;
@@ -109,9 +109,14 @@ const SDrawerItem = styled(DrawerItem)`
 
 const DrawerItems = [
   {
+    title: "主页",
+    pic: five,
+    link: "/"
+  },
+  {
     title: "错题集",
     pic: one,
-    link: "/"
+    link: "/upload"
   },
   {
     title: "评分记录",
@@ -128,11 +133,7 @@ const DrawerItems = [
     pic: four,
     link: "/canvas"
   },
-  {
-    title: "关于我们",
-    pic: five,
-    link: "/"
-  }
+
 ]
 const Key = styled.img`
   object-fit: cover;

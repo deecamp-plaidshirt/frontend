@@ -15,15 +15,14 @@ import Canvas from './components/canvas'
 import {withRouter} from 'react-router-dom'
 import MainPage from './components/mainpage'
 import my_img from './resources/my.png'
-import read_img from './resources/reading.png'
 
 
 
 
 const StyledButton = styled.img`
   font-size: 20px;
-  width: 50px;
-  height: 50px;
+  width: 1.8rem;
+  height: 2rem;
   background-color: #f4ba1b;
   position: fixed;
   left: ${props=>props.left? '4vw': null};
@@ -34,7 +33,7 @@ const StyledButton = styled.img`
   justify-content: center;
   align-items: center;
   img{
-    width: 1.5rem;
+    width: 1.8rem;
     height: 2rem;
     object-fit: contain;
   }
@@ -57,7 +56,7 @@ function App(props) {
           <Route className="route" exact path="/" component={MainPage} />
           <Route className="route" path="/upload" component={TakePhoto} />
           <Route className="route" path="/animation" component={Animation} />
-          <Route className="route" path="/canvas" component={Canvas} />
+          <Route className="route" path="/canvas" component={MainPage} />
         </Router>
       </div>
 
