@@ -117,9 +117,10 @@ const Envs = styled((props)=>{
   )
 })`
   width: 100vw;
-  height: 50vh;
+  height: 48vh;
   opacity: 1;
   display: flex;
+  margin-top: 2vh;
   flex-direction: column;
   align-items: center;
   div{
@@ -141,7 +142,6 @@ const StyledUpload = styled.div`
   background-color: white;
   display:inline-block;
   padding:0.3em 1.2em;
-  margin:1vh 0.1em 0.1em 0;
   border:0.16em solid rgba(255,255,255,0);
   border-radius:0.5em;
   box-shadow: 0.4em 0.4em 0.4em rgba(209, 159, 21, 0.87);
@@ -174,7 +174,7 @@ const SDDrawer = styled(DDrawer)`
   height: 100%;
 `
 
-function TakePhoto(props){
+function MainPage(props){
   const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
 
   const [url, setUrl] = useState("")
@@ -233,23 +233,30 @@ function TakePhoto(props){
     <div className={props.className}>
       <Header/>
       <Envs envs={envs}/>
-      <Upload 
-        onChange={handleChange}
-        showUploadList={false}
-        customRequest={uploadFile}
-      >
-        <StyledUpload primary>拍照</StyledUpload>
-      </Upload>
+      <div id="upload">
+        <Upload 
+          onChange={handleChange}
+          showUploadList={false}
+          customRequest={uploadFile}
+        >
+          <StyledUpload primary>拍照</StyledUpload>
+        </Upload>
+      </div>
+
     </div>
   )
 }
 
-const STakePhoto = styled(TakePhoto)`
+const SMainPage = styled(MainPage)`
   display: flex;
   flex-direction: column;
   align-items: center;
   height: 100%;
-  width: 90%;
+  width: 100%;
+  #upload{
+    width: 100vw;
+    height: 20vh;
+  }
 `;
 
-export default STakePhoto;
+export default SMainPage;
