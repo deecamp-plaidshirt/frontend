@@ -13,21 +13,31 @@ import styled from 'styled-components'
 import TakePhoto from './components/takephoto'
 import Canvas from './components/canvas'
 import {withRouter} from 'react-router-dom'
+import MainPage from './components/mainpage'
+import my_img from './resources/my.png'
+import read_img from './resources/reading.png'
 
 
-const StyledButton = styled(Button)`
+
+
+const StyledButton = styled.img`
   font-size: 20px;
   width: 50px;
   height: 50px;
-  background-color: ${props => props.warning ? 'red' : '#4e9af1'}
-  background-color: ${props => props.primary ? 'green' : '#4e9af1'}
+  background-color: #f4ba1b;
   position: fixed;
-  left: ${props=>props.left? '2vw': null};
-  right: ${props=>props.left? null : '2vw'};
-  top: 3vh;
+  left: ${props=>props.left? '4vw': null};
+  right: ${props=>props.left? null : '4vw'};
+  top: 2rem;
+  left: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  img{
+    width: 1.5rem;
+    height: 2rem;
+    object-fit: contain;
+  }
 `;
 
 //const SDrawerWithRouter = withRouter(SDrawer)
@@ -42,11 +52,10 @@ function App(props) {
       <div className="App">
         <Router>
           <SDrawer opened={props.opened?"open":undefined} toggle={toggle}/>
-          <h1 className="title">ALINE</h1>
-          <StyledButton left onClick={toggle}><span>O</span></StyledButton>
+          <StyledButton left onClick={toggle} src={my_img}></StyledButton>
           {/*<Canvas/>*/}
-          <Route className="route" exact path="/" component={TakePhoto} />
-          <Route className="route" path="/clock" component={Clock} />
+          <Route className="route" exact path="/" component={MainPage} />
+          <Route className="route" path="/upload" component={TakePhoto} />
           <Route className="route" path="/animation" component={Animation} />
           <Route className="route" path="/canvas" component={Canvas} />
         </Router>
@@ -86,6 +95,7 @@ const SView = styled(Viewpager)`
   top: 0vh;
   will-change: transform;
   z-index: 1000;
+  
   
 
 `;

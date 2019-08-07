@@ -3,13 +3,13 @@
   "name": "A LINE HELP YOU OUT",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "icons.png",
+      "sizes": "1400x1400",
+      "type": "image/png"
     }
   ],
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#eeeeee"
+  "background_color": "rgb(227, 184, 53)"
 }

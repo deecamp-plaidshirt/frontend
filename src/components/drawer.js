@@ -3,10 +3,19 @@ import {animated, useSpring} from 'react-spring'
 import {useDrag} from 'react-use-gesture'
 import styled from 'styled-components'
 import {withRouter} from 'react-router-dom'
+import my_y from '../resources/my_y.png'
+import key_img from '../resources/key.png'
+import one from '../resources/one.png'
+import two from '../resources/two.png'
+import three from '../resources/three.png'
+import four from '../resources/four.png'
+import five from '../resources/five.png'
 
 const Title = styled.h3`
   color: #666;
-  margin-bottom: 6px;
+  margin: 0.5rem;
+  transform: translateX(1.5rem);
+  font-weight:400;
 `;
 
 const Content = styled.p`
@@ -21,8 +30,7 @@ function Header(props){
   }
   return(
     <div className={props.className}>
-      <p onClick={props.toggle}>X</p>
-      <h2>Drawer</h2>
+      <h1>我的</h1>
     </div>
   )
 }
@@ -33,15 +41,22 @@ const SHeader = styled(Header)`
   align-items: center;
   justify-content: center;
 
-  p{
+  h1{
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 0;
+    margin-top:1.5rem;
+    color: #f4ba1b;
+  }
+
+  h1::before{
+    content:'';
+    background-image:url(${my_y});
+    background-size: 2rem 2.2rem;
     position: absolute;
-    font-size: 20px;
-    color: black;
-    left: 10px;
-    top: 2px;
-    :active{
-      box-shadow:inset 0 0.6em 2em -0.3em rgba(0,0,0,0.2),inset 0 0 0em 0.05em rgba(255,255,255,0.1);
-    }
+    width:2rem;
+    height:2.2rem;
+    transform: translate(-3.8rem, -0.1rem);
   }
 
 `;
@@ -62,17 +77,18 @@ function DrawerItem(props){
   return(
     <div onClick={(e)=>clicked(props.link, e)} className={props.className}>
       <Title>{props.title}</Title>
-      <Content>{props.content}</Content>
     </div>
   )
 }
 
 const SDrawerItem = styled(DrawerItem)`
-  margin: 20px;
-  margin-bottom: 40px;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  margin: 1rem;
+  margin-bottom: 0;
+  margin-top: 0.5rem;
+  border-bottom: 0.1rem solid #f4ba1b;
+  background-color:  rgb(250,250,250);
+  display: flex;
+  items-align: center;
   :hover{
     box-shadow: 0 8px 12px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
   }
@@ -80,31 +96,50 @@ const SDrawerItem = styled(DrawerItem)`
     box-shadow: 0 0.6em 2em -0.3em rgba(0,0,0,0.5), 0 0 0em 0.05em rgba(255,255,255,0.1);
   }
   transition: 0.5s;
+  ::before{
+    content:'';
+    opacity: 0.7;
+    background-image:url(${props=>props.img});
+    background-size: 2rem 2rem;
+    width:2rem;
+    height:2rem;
+    transform: translate(0, 0);
+  }
 `;
 
 const DrawerItems = [
   {
-    title: "Main Page",
-    contnet: "go back to main page",
+    title: "错题集",
+    pic: one,
     link: "/"
   },
   {
-    title: "我的错题",
-    contnet: "记录所有的错误题目",
+    title: "评分记录",
+    pic: two,
     link: "/clock"
   },
   {
-    title: "学习记录",
-    contnet: "记录所有的题目",
+    title: "单词集",
+    pic: three,
     link: "/animation"
   },
   {
-    title: "我的设置",
-    contnet: "进行应用设置",
+    title: "设置",
+    pic: four,
     link: "/canvas"
+  },
+  {
+    title: "关于我们",
+    pic: five,
+    link: "/"
   }
 ]
-
+const Key = styled.img`
+  object-fit: cover;
+  width: 180px;
+  height: 160px;
+  bottom: 0;
+`;
 const RSDrawerItem = withRouter(SDrawerItem)
 
 function Drawer(props){
@@ -127,12 +162,13 @@ function Drawer(props){
     <div onClick={stop} className={props.className}>
       <SHeader toggle={props.toggle}/>
       {
-        DrawerItems.map((item, index)=>{
+        props.DrawerItems.map((item, index)=>{
           return(
-            <RSDrawerItem clicked={toggle} link={item.link} title={item.title} content={item.contnet} key={item.title}></RSDrawerItem>
+            <RSDrawerItem img={item.pic} clicked={toggle} link={item.link} title={item.title} content={item.contnet} key={item.title}></RSDrawerItem>
           )
         })
       }
+      <Key src={key_img} alt="key"></Key>
     </div>
   )
 }
@@ -141,11 +177,17 @@ const SDrawer = styled(Drawer)`
   position: absolute;
   background-color: rgb(250,250,250);
   left: 0;
-  width: 300px;
-  height: 100%;
+  width: 200px;
+  height: 70%;
+  top: 3vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   transition: 0.5s;
+  border-radius: 0 1.3rem 1.3rem 0;
   z-index: 500;
   transform: translateX(${props => props.opened ? 0 : '-300px'})
+
 `;
 
 function Container(props){
@@ -157,7 +199,7 @@ function Container(props){
   }
   return (
     <div  onClick={toggle} className={className}>
-      <SDrawer opened={opened} {...prop}/>
+      <SDrawer DrawerItems={DrawerItems} opened={opened} {...prop}/>
     </div>    
   )
 }
@@ -170,30 +212,6 @@ const SContainer = styled(Container)`
   z-index: 1000;
   pointer-events: ${props => props.opened ? 'auto':'none' };
 `;
-
-const ASContainer = animated(SContainer)
-
-function Whole(props) {
-  const [{ xy }, set] = useSpring(() => ({ xy: [0, 0] }))
-
-  // 1. we define the drag gesture logic using the useDrag hook
-  const bind = useDrag(({ down, delta }) => {
-    set({ xy: down ? delta : [0, 0] })
-  })
-
-
-  return (
-    <ASContainer
-      // 2. we bind the result of the hook to our component
-      {...bind()}
-      style={{transform: xy.interpolate((x, y) => `translate3D(${x}px, ${y}px, 0)`),
-      }}
-    >
-      <button>Drag me!</button>
-    </ASContainer>
-  )
-}
-
 
 
 export default SContainer
