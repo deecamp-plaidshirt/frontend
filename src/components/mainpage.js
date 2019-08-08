@@ -1,6 +1,6 @@
 import {StyledButton } from '../styled/styled'
 import styled from 'styled-components'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Upload} from 'antd'
 import {get, post} from '../utils/api'
 import DDrawer from './carddrawer'
@@ -108,14 +108,23 @@ const envMask = styled((props)=>{
 
 const WaitingMask = styled((props)=>{
 
+  useEffect(()=>{
+    setTimeout(() => {
+      setuploading(false)
+    }, 5000);
+  })
+
   const cancel = ()=>{
     props.cancel()
   }
 
+  const [isUploading, setuploading] = useState(true)
+
+
   return(
     <div className={props.className}>
-      <img id="upmask" src={up_mask} alt="uplaodmask"></img>
-      <img id="load-img" alt="uploaded"></img>
+      {isUploading && <img id="upmask" src={up_mask} alt="uplaodmask"></img>}
+      <img id="load-img" src={props.img} alt="uploaded"></img>
       <div>
         <StyledButton onClick={cancel}>翻译</StyledButton>
         <StyledButton primary onClick={cancel}>批改</StyledButton>
@@ -149,6 +158,7 @@ const WaitingMask = styled((props)=>{
     opacity: 1
     border-radius: 1rem;
     box-shadow: 0.5rem 0.5rem 2.5rem 1rem rgba(80, 80, 80, 0.6)
+    object-fit: contain;
   }
   div{
     width: 100%;
@@ -260,7 +270,7 @@ function MainPage(props){
   }
 
   const uploadFile = async ({file})=>{
-    cancel()
+    //cancel()
     //console.log(file)
     let tmp = URL.createObjectURL(file)
     setUrl(tmp)
@@ -284,6 +294,8 @@ function MainPage(props){
     })
     console.log(res)
     */
+
+    cancel()
 
   }
   const [open, setopen] = useState(false)
@@ -314,7 +326,7 @@ function MainPage(props){
   return(
     <div className={props.className}>
       <SDDrawer fullopen={fullopen} content={content} fopened={fopen?"fopen":undefined} opened={open?"open":undefined} toggle={toggle}/>
-      <WaitingMask uploading={uploading} cancel={cancel}/>
+      <WaitingMask img={url} uploading={uploading} cancel={cancel}/>
       <Header/>
       <Envs toggle={toggle} envs={envs}/>
       <div id="upload">
@@ -324,7 +336,7 @@ function MainPage(props){
           showUploadList={false}
           customRequest={uploadFile}
         >
-          <StyledUpload onClick={cancel} primary>拍照</StyledUpload>
+          <StyledUpload primary>拍照</StyledUpload>
         </Upload>
       </div>
 

@@ -57,14 +57,22 @@ class Canvas extends React.Component{
     console.log(this.group.width(), this.group.height())
     let grpw = this.group.width(), grph = this.group.height()
     let scale = 1
+    let distance = 0
     if(this.state.imgw > this.state.imgh){
       scale =  grpw / this.state.imgw
+      distance = this.state.imgh * scale
     }
     else{
       scale = grph / this.state.imgh
+      distance = this.state.img_w * scale
     }
     this.group.scaleX(scale)
     this.group.scaleY(scale)
+    this.group.rotate(90)
+    this.group.move({
+      x:distance,
+      y:0,
+    })
 
   }
 
