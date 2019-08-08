@@ -1,6 +1,4 @@
 import React, {useState} from 'react'
-import {animated, useSpring} from 'react-spring'
-import {useDrag} from 'react-use-gesture'
 import styled from 'styled-components'
 import {withRouter} from 'react-router-dom'
 import my_y from '../resources/my_y.png'
@@ -116,7 +114,7 @@ const DrawerItems = [
   {
     title: "错题集",
     pic: one,
-    link: "/upload"
+    link: "/photo"
   },
   {
     title: "评分记录",

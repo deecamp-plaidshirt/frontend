@@ -9,6 +9,7 @@ import read_img from '../resources/reading.png'
 import env_img from '../resources/env.png'
 import line_img from '../resources/line.png'
 import up_mask from '../resources/upmask.png'
+import {withRouter} from 'react-router-dom'
 
 const Header = styled(function Head(props){
   return(
@@ -106,19 +107,18 @@ const envMask = styled((props)=>{
 
 `;
 
-const WaitingMask = styled((props)=>{
+const WaitingMask =  styled((props)=>{
 
-  useEffect(()=>{
+  const [isUploading, setuploading] = useState(false)
+
+  const sendImg = ()=>{
+    setuploading(true)
     setTimeout(() => {
       setuploading(false)
-    }, 5000);
-  })
-
-  const cancel = ()=>{
-    props.cancel()
+      props.cancel()
+      props.history.push(`/photo`)
+    }, 3000);
   }
-
-  const [isUploading, setuploading] = useState(true)
 
 
   return(
@@ -126,8 +126,8 @@ const WaitingMask = styled((props)=>{
       {isUploading && <img id="upmask" src={up_mask} alt="uplaodmask"></img>}
       <img id="load-img" src={props.img} alt="uploaded"></img>
       <div>
-        <StyledButton onClick={cancel}>翻译</StyledButton>
-        <StyledButton primary onClick={cancel}>批改</StyledButton>
+        <StyledButton onClick={()=>sendImg()}>翻译</StyledButton>
+        <StyledButton primary onClick={()=>sendImg(sendImg)}>批改</StyledButton>
       </div>
     </div>
   )
@@ -144,11 +144,13 @@ const WaitingMask = styled((props)=>{
   opacity: 1
 
   #upmask{
-    width: 80%;
+    width: 60%;
     height: auto;
     position: fixed;
     z-index: 105;
     object-fit: contain;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 2rem;
   }
 
   #load-img{
@@ -174,6 +176,8 @@ const WaitingMask = styled((props)=>{
     width: 40%;
   }
 `;
+
+const WaitingMaskWithRouter = withRouter(WaitingMask)
 
 const Envs = styled((props)=>{
 
@@ -275,6 +279,8 @@ function MainPage(props){
     let tmp = URL.createObjectURL(file)
     setUrl(tmp)
     console.log(tmp)
+
+    cancel(true)
     
     //const res = await get('http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/')
     //console.log(res)
@@ -295,13 +301,14 @@ function MainPage(props){
     console.log(res)
     */
 
-    cancel()
+    
 
   }
   const [open, setopen] = useState(false)
   const [content, setcontent] = useState("hello drawer")
   const [fopen, setfopen] = useState(false)
   const [uploading, setuploading] = useState(false)
+  const [needmask, setneedmask] = useState(true)
 
   const toggle = (content)=>{
     openDrawer(content)
@@ -318,15 +325,14 @@ function MainPage(props){
     setfopen(!fopen)
   }
 
-  const cancel = ()=>{
-    setuploading(!uploading)
+  const cancel = (bool)=>{
+    setuploading(bool)
   }
-
 //"https://cdn.pixabay.com/photo/2016/06/18/17/42/image-1465348_960_720.jpg"
   return(
     <div className={props.className}>
       <SDDrawer fullopen={fullopen} content={content} fopened={fopen?"fopen":undefined} opened={open?"open":undefined} toggle={toggle}/>
-      <WaitingMask img={url} uploading={uploading} cancel={cancel}/>
+      <WaitingMaskWithRouter img={url} uploading={uploading} cancel={cancel}/>
       <Header/>
       <Envs toggle={toggle} envs={envs}/>
       <div id="upload">

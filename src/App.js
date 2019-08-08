@@ -1,18 +1,12 @@
 import React, {useState, useRef} from 'react';
 import './App.css';
-import clamp from 'lodash-es/clamp'
-import Clock from './components/clock'
 import Animation from './components/animation'
-import { useSprings, animated } from 'react-spring'
-import { BrowserRouter as Router, Route, Link } from "react-router-dom"
+import { animated } from 'react-spring'
+import { BrowserRouter as Router, Route } from "react-router-dom"
 import { useDrag } from 'react-use-gesture'
 import SDrawer from './components/drawer'
-import DDrawer from './components/carddrawer'
-import {Button } from './styled/styled'
 import styled from 'styled-components'
 import TakePhoto from './components/takephoto'
-import Canvas from './components/canvas'
-import {withRouter} from 'react-router-dom'
 import MainPage from './components/mainpage'
 import my_img from './resources/my.png'
 
@@ -54,7 +48,7 @@ function App(props) {
           <StyledButton left onClick={toggle} src={my_img}></StyledButton>
           {/*<Canvas/>*/}
           <Route className="route" exact path="/" component={MainPage} />
-          <Route className="route" path="/upload" component={TakePhoto} />
+          <Route className="route" path="/photo" component={TakePhoto} />
           <Route className="route" path="/animation" component={Animation} />
           <Route className="route" path="/canvas" component={MainPage} />
         </Router>

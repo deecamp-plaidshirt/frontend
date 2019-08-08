@@ -1,6 +1,4 @@
-import React, {useState} from 'react'
-import {animated, useSpring} from 'react-spring'
-import {useDrag} from 'react-use-gesture'
+import React from 'react'
 import styled from 'styled-components'
 import {withRouter} from 'react-router-dom'
 
