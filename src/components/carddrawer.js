@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import {withRouter} from 'react-router-dom'
+import EXIF from 'exif-js';
 
 const Title = styled.h3`
   color: #666;

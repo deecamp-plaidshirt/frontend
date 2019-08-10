@@ -60,15 +60,19 @@ class Canvas extends React.Component{
     let distance = 0
     if(this.state.imgw > this.state.imgh){
       scale =  grpw / this.state.imgw
-      distance = this.state.imgh * scale
+      distance = parseInt(this.state.imgh) * parseFloat(scale)
     }
     else{
       scale = grph / this.state.imgh
-      distance = this.state.img_w * scale
+      distance = parseInt(this.state.img_w) * parseFloat(scale)
+    }
+    if(isNaN(distance)){
+      distance = 0
+      console.log("not a number")
     }
     this.group.scaleX(scale)
     this.group.scaleY(scale)
-    this.group.rotate(90)
+    this.group.rotate(this.props.rotate)
     this.group.move({
       x:distance,
       y:0,
@@ -138,8 +142,8 @@ class Canvas extends React.Component{
   render(){
     return(
       <Stage 
-        width={window.innerWidth*0.9} 
-        height={window.innerHeight*0.7}
+        width={window.innerWidth*0.95} 
+        height={window.innerHeight*0.75}
         className={this.props.className}
       >
         <Layer 
@@ -162,7 +166,7 @@ class Canvas extends React.Component{
               opacity={this.state.opacity}
               ref={node => this.imgEle = node }
             />
-            {
+            {/*
               [100, 200, 300, 400].map((val, index) =>{
                 return(
                   <Circle
@@ -175,13 +179,8 @@ class Canvas extends React.Component{
                     onTap={this.showCard}
                   />
                 )
-              })
+              })*/
             }
-            <Circle
-              radius={30}
-              fill="green"
-              //draggable
-            />
           </Group>
           <Rect
             x={10}

@@ -79,6 +79,7 @@ function TakePhoto(props){
     })
     console.log(res)
     */
+    
 
   }
   const [open, setopen] = useState(false)

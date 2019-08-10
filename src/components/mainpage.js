@@ -10,6 +10,8 @@ import env_img from '../resources/env.png'
 import line_img from '../resources/line.png'
 import up_mask from '../resources/upmask.png'
 import {withRouter} from 'react-router-dom'
+import EXIF from 'exif-js';
+import Canvas from './newcanvas'
 
 const Header = styled(function Head(props){
   return(
@@ -116,15 +118,16 @@ const WaitingMask =  styled((props)=>{
     setTimeout(() => {
       setuploading(false)
       props.cancel()
-      props.history.push(`/photo`)
+      props.forward(props.img)
+      //props.history.push(`/photo`)
     }, 3000);
   }
 
 
   return(
     <div className={props.className}>
-      {isUploading && <img id="upmask" src={up_mask} alt="uplaodmask"></img>}
-      <img id="load-img" src={props.img} alt="uploaded"></img>
+      {isUploading && <div id="upmask"><img src={up_mask} alt="uplaodmask"></img></div>}
+      <Canvas id="load-img" rotate={props.rotate} img_url={props.img}/>
       <div>
         <StyledButton onClick={()=>sendImg()}>翻译</StyledButton>
         <StyledButton primary onClick={()=>sendImg(sendImg)}>批改</StyledButton>
@@ -144,13 +147,21 @@ const WaitingMask =  styled((props)=>{
   opacity: 1
 
   #upmask{
-    width: 60%;
-    height: auto;
-    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(50, 50, 50, 0.5);
     z-index: 105;
-    object-fit: contain;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 2rem;
+    position: fixed;
+    img{
+      width: 14rem;
+      height: 10rem;
+      position: fixed;
+      z-index: 105;
+      object-fit: contain;
+      background-color: rgba(255, 255, 255, 1);
+      box-shadow: 0.2rem 0.2rem 0.3rem 0.3rem rgba(80, 80, 80, 0.2);
+      border-radius: 2rem;
+    }
   }
 
   #load-img{
@@ -220,7 +231,7 @@ const Envs = styled((props)=>{
   img{
     object-fit: contain;
     width: 100vw;
-    height: auto;
+    height: 10vh;
     transform: translateY(-3rem);
   }
 `;
@@ -263,10 +274,58 @@ const SDDrawer = styled(DDrawer)`
   height: 100%;
 `
 
+const Navigator = styled((props)=>{
+
+  const goback = ()=>{
+    props.goback()
+  }
+  return(
+    <div className={props.className} >
+      <div>
+        <h2 id="goback" onClick={goback}>{"<-"}</h2>
+        <h3>Photo page Navigator</h3>       
+      </div>
+      <img src={props.img} alt="navigate"></img>
+    </div>
+  )
+})`
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 100vw;
+  background-color: white;
+  transform: translateX(${props=>props.navigate?'-100vw':0});
+  transition: 1s;
+  z-index: 1000;
+  
+  div{
+    display: flex;
+    width: 100%;
+    height: 10%;
+    flex-direction: row;
+    position: fixed;
+    background-color: rgba(244,186,27,1);
+    font-size: 1rem;
+    justify-content: center;
+    #goback{
+      position: fixed;
+      left: 1rem;
+    }
+  }
+  img{
+    margin-top: 10%;
+    width: 100%;
+    height: 90%;
+    object-fit: contain;
+  }
+`;
+
 function MainPage(props){
-  const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
+  //const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
+  const base_url = 'http://106.14.5.161:8081/ocr/'
 
   const [url, setUrl] = useState("")
+  const [rotate, setrotate] = useState(0)
   let [image, setImage] = useState("")
   const handleChange = ()=>{
     
@@ -286,6 +345,27 @@ function MainPage(props){
     //console.log(res)
     //URL.revokeObjectURL(tmp)
 
+    EXIF.getData(file, function(){
+      var _dataTxt = EXIF.pretty(this);
+      var _dataJson = JSON.stringify(EXIF.getAllTags(this));
+      let _rotate = 0;
+      let _orientation = EXIF.getTag(this, 'Orientation');
+
+      if (_orientation == 3) {
+          _rotate = 180;
+        } else if (_orientation == 6) {
+          _rotate = 90;
+        } else if (_orientation == 8) {
+          _rotate = 270;
+      };
+      setrotate(_rotate)
+
+      console.log(_rotate)
+      console.log(_dataJson)
+      console.log(_dataTxt)
+      alert(_orientation)
+    })
+
     let tmpimg = new window.Image();
     tmpimg.src = tmp;
     setImage(tmpimg)
@@ -298,9 +378,25 @@ function MainPage(props){
     const res = await post(base_url+'img', param, {
       headers:{'Content-Type':'multipart/form-data'}
     })
-    console.log(res)
+    console.log(res.data.data)
+    let str = res.data.data.map(item=>{
+      return item
+    }).reduce((accumulator, currentValue)=>{
+      return accumulator+=currentValue
+    })
+    console.log(str)
+    let words = JSON.parse(str)
+    console.log(words.data.block)
+    let lines = words.data.block
+    let results = lines.map(item=>{
+      item.line.word.map(l=>{
+        return l.content
+      }).reduce((acc, curr)=>{
+        return acc + curr
+      })
+    })
+    console.log(results)
     */
-
     
 
   }
@@ -309,6 +405,8 @@ function MainPage(props){
   const [fopen, setfopen] = useState(false)
   const [uploading, setuploading] = useState(false)
   const [needmask, setneedmask] = useState(true)
+  const [navigate, setnavigate] = useState(false)
+  const [navigateImg, setNavigateImg] = useState('')
 
   const toggle = (content)=>{
     openDrawer(content)
@@ -328,11 +426,27 @@ function MainPage(props){
   const cancel = (bool)=>{
     setuploading(bool)
   }
+  const goback = ()=>{
+    setnavigate(false)
+  }
+  const forward = (img)=>{
+    setnavigate(true)
+    setNavigateImg(img)
+  }
+
+  const checkRotation = ()=> {
+    console.log("check rotation")
+    EXIF.getData(this.imgEle, () => { 
+      console.log(EXIF.getTag(this.imgEle, 'Orientation'))
+    })
+  }
+
 //"https://cdn.pixabay.com/photo/2016/06/18/17/42/image-1465348_960_720.jpg"
   return(
     <div className={props.className}>
       <SDDrawer fullopen={fullopen} content={content} fopened={fopen?"fopen":undefined} opened={open?"open":undefined} toggle={toggle}/>
-      <WaitingMaskWithRouter img={url} uploading={uploading} cancel={cancel}/>
+      <WaitingMaskWithRouter rotate={rotate} img={url} uploading={uploading} cancel={cancel} forward={forward}/>
+      <Navigator navigate={navigate} goback={goback} img={navigateImg}/>
       <Header/>
       <Envs toggle={toggle} envs={envs}/>
       <div id="upload">
