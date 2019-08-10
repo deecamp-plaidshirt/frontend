@@ -10,8 +10,8 @@ function Viewpager(prop) {
   const index = useRef(0)
   const [props, set] = useSprings(pages.length, i => ({ x: i * window.innerWidth, sc: 1, display: 'block' }))
   const bind = useDrag(({ down, delta: [xDelta], direction: [xDir], distance, cancel }) => {
-    console.log(down  )
-    console.log(distance)
+    //console.log(down  )
+    //console.log(distance)
     if (down && distance > window.innerWidth / 2)
       cancel((index.current = clamp(index.current + (xDir > 0 ? -1 : 1), 0, pages.length - 1)))
     set(i => {

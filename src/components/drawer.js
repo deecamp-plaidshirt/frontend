@@ -23,7 +23,7 @@ const Content = styled.p`
 
 function Header(props){
   const toggle = ()=>{
-    console.log("close")
+    //console.log("close")
     props.toggle()
   }
   return(

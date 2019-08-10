@@ -112,7 +112,7 @@ function Canvas(props){
   }
 
   const dragend = (e)=>{
-    console.log("drag end")
+    //console.log("drag end")
   }
 
   //onTouchMove={touchscale}

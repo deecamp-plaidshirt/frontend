@@ -42,7 +42,7 @@ class Clock extends React.Component{
   }
 
   onTap = ()=>{
-    console.log("tapped")
+    //console.log("tapped")
   }
 
   changeTitle = ()=>{

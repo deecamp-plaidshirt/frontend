@@ -76,7 +76,7 @@ export default class Animation extends React.Component{
   }
 
   onTap = (text) => {
-    console.log(text+"tapped")
+    //console.log(text+"tapped")
   }
 
   changeTitle = (text)=>{
@@ -86,7 +86,7 @@ export default class Animation extends React.Component{
   }
   
   start = ()=>{
-    console.log("drag block mounted")
+    //console.log("drag block mounted")
   }
 
 

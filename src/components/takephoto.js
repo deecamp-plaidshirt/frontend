@@ -51,15 +51,16 @@ function TakePhoto(props){
 
   const [url, setUrl] = useState("")
   let [image, setImage] = useState("")
+  const [rects, setrects] = useState(undefined)
   const handleChange = ()=>{
-    console.log("photo")
+    //console.log("photo")
   }
 
   const uploadFile = async ({file})=>{
     //console.log(file)
     let tmp = URL.createObjectURL(file)
     setUrl(tmp)
-    console.log(tmp)
+    //console.log(tmp)
     
     //const res = await get('http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/')
     //console.log(res)
@@ -72,13 +73,14 @@ function TakePhoto(props){
     let param = new FormData(); //创建form对象
     param.append('file',file);//通过append向form对象添加数据
     param.append('chunk','0');//添加form表单中其他数据
-    console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
-    /*
+    //console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
+    
     const res = await post(base_url+'img', param, {
       headers:{'Content-Type':'multipart/form-data'}
     })
-    console.log(res)
-    */
+    //console.log(res)
+    //setrects(res)
+    
     
 
   }
@@ -97,7 +99,7 @@ function TakePhoto(props){
   }
 
   const fullopen = ()=>{
-    console.log("fullopen")
+    //("fullopen")
     setfopen(!fopen)
   }
 

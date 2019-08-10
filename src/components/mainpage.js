@@ -112,25 +112,52 @@ const envMask = styled((props)=>{
 const WaitingMask =  styled((props)=>{
 
   const [isUploading, setuploading] = useState(false)
+  const [rects, setrects] = useState(undefined)
 
-  const sendImg = ()=>{
+  const sendImg = async ()=>{
     setuploading(true)
+
+    const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
+    let tmp = props.img
+    let tmpimg = new window.Image();
+    tmpimg.src = tmp;
+    //let file = e.target.files[0];           
+    let param = new FormData(); //创建form对象
+    param.append('file',props.imgFile);//通过append向form对象添加数据
+    param.append('chunk','0');//添加form表单中其他数据
+    //console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
+
+    const res = await post(base_url+'img', param, {
+      headers:{'Content-Type':'multipart/form-data'}
+    })
+    //console.log(res.data.data)
+    setrects(res.data.data)
+
+    props.cancel()
+    //console.log("before forward", rects)
+    props.forward(props.img, res.data.data)
+
+    /*
     setTimeout(() => {
       setuploading(false)
       props.cancel()
       props.forward(props.img)
       //props.history.push(`/photo`)
     }, 3000);
+    */
   }
 
 
   return(
     <div className={props.className}>
       {isUploading && <div id="upmask"><img src={up_mask} alt="uplaodmask"></img></div>}
-      <Canvas id="load-img" rotate={props.rotate} img_url={props.img}/>
+      <Canvas width={window.innerWidth * 0.95} height={window.innerHeight*0.75} static={props.static} 
+              id="load-img" rotate={props.rotate} img_url={props.img}
+              //rects={rects}
+              />
       <div>
         <StyledButton onClick={()=>sendImg()}>翻译</StyledButton>
-        <StyledButton primary onClick={()=>sendImg(sendImg)}>批改</StyledButton>
+        <StyledButton primary onClick={()=>sendImg()}>批改</StyledButton>
       </div>
     </div>
   )
@@ -276,16 +303,22 @@ const SDDrawer = styled(DDrawer)`
 
 const Navigator = styled((props)=>{
 
+  const toggle  =(content)=>{
+    props.toggle(content)
+  }
+
   const goback = ()=>{
     props.goback()
   }
   return(
     <div className={props.className} >
-      <div>
-        <h2 id="goback" onClick={goback}>{"<-"}</h2>
+      <div id="goback">
+        <h1 onClick={goback}>{"<-"}</h1>
         <h3>Photo page Navigator</h3>       
       </div>
-      <img src={props.img} alt="navigate"></img>
+      <div id="navcanvas">
+        <Canvas  toggle={toggle} rects={props.rects} width={window.innerWidth} height={window.innerHeight*0.9} rotate={props.rotate} img_url={props.img}/>
+      </div>
     </div>
   )
 })`
@@ -298,25 +331,29 @@ const Navigator = styled((props)=>{
   transition: 1s;
   z-index: 1000;
   
-  div{
+  #goback{
     display: flex;
     width: 100%;
     height: 10%;
     flex-direction: row;
-    position: fixed;
     background-color: rgba(244,186,27,1);
     font-size: 1rem;
     justify-content: center;
-    #goback{
+    left: 1rem;
+    border-bottom: solid thin black;
+    h1{
       position: fixed;
-      left: 1rem;
+      margin: 0;
+      left: 0;
+      top: 0.5rem;
     }
   }
-  img{
-    margin-top: 10%;
+  #navcanvas{
+    position: fixed;
     width: 100%;
     height: 90%;
     object-fit: contain;
+    background-color: rgba(244,186,27,1);
   }
 `;
 
@@ -327,9 +364,10 @@ function MainPage(props){
   const [url, setUrl] = useState("")
   const [rotate, setrotate] = useState(0)
   let [image, setImage] = useState("")
+  const [imgfile, setFile] = useState(undefined)
   const handleChange = ()=>{
     
-    console.log("photo")
+    //console.log("photo")
   }
 
   const uploadFile = async ({file})=>{
@@ -337,7 +375,7 @@ function MainPage(props){
     //console.log(file)
     let tmp = URL.createObjectURL(file)
     setUrl(tmp)
-    console.log(tmp)
+    //console.log(tmp)
 
     cancel(true)
     
@@ -351,21 +389,23 @@ function MainPage(props){
       let _rotate = 0;
       let _orientation = EXIF.getTag(this, 'Orientation');
 
-      if (_orientation == 3) {
+      if (_orientation === 3) {
           _rotate = 180;
-        } else if (_orientation == 6) {
+        } else if (_orientation === 6) {
           _rotate = 90;
-        } else if (_orientation == 8) {
+        } else if (_orientation === 8) {
           _rotate = 270;
       };
       setrotate(_rotate)
 
-      console.log(_rotate)
-      console.log(_dataJson)
-      console.log(_dataTxt)
-      alert(_orientation)
+      //console.log(_rotate)
+      //console.log(_dataJson)
+      //console.log(_dataTxt)
+      //alert(_orientation)
     })
 
+    setFile(file)
+    /*
     let tmpimg = new window.Image();
     tmpimg.src = tmp;
     setImage(tmpimg)
@@ -374,6 +414,7 @@ function MainPage(props){
     param.append('file',file);//通过append向form对象添加数据
     param.append('chunk','0');//添加form表单中其他数据
     console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
+    */
     /*
     const res = await post(base_url+'img', param, {
       headers:{'Content-Type':'multipart/form-data'}
@@ -407,6 +448,7 @@ function MainPage(props){
   const [needmask, setneedmask] = useState(true)
   const [navigate, setnavigate] = useState(false)
   const [navigateImg, setNavigateImg] = useState('')
+  const [rects, setRects] = useState(undefined)
 
   const toggle = (content)=>{
     openDrawer(content)
@@ -419,7 +461,7 @@ function MainPage(props){
   }
 
   const fullopen = ()=>{
-    console.log("fullopen")
+    //console.log("fullopen")
     setfopen(!fopen)
   }
 
@@ -429,15 +471,17 @@ function MainPage(props){
   const goback = ()=>{
     setnavigate(false)
   }
-  const forward = (img)=>{
+  const forward = (img, rects)=>{
     setnavigate(true)
     setNavigateImg(img)
+    setRects(rects)
+    console.log('forward',rects)
   }
 
   const checkRotation = ()=> {
-    console.log("check rotation")
+    //console.log("check rotation")
     EXIF.getData(this.imgEle, () => { 
-      console.log(EXIF.getTag(this.imgEle, 'Orientation'))
+      EXIF.getTag(this.imgEle, 'Orientation')
     })
   }
 
@@ -445,8 +489,8 @@ function MainPage(props){
   return(
     <div className={props.className}>
       <SDDrawer fullopen={fullopen} content={content} fopened={fopen?"fopen":undefined} opened={open?"open":undefined} toggle={toggle}/>
-      <WaitingMaskWithRouter rotate={rotate} img={url} uploading={uploading} cancel={cancel} forward={forward}/>
-      <Navigator navigate={navigate} goback={goback} img={navigateImg}/>
+      <WaitingMaskWithRouter imgFile={imgfile} static={true} rotate={rotate} img={url} uploading={uploading} cancel={cancel} forward={forward}/>
+      <Navigator toggle={toggle} rects={rects} imgFile={imgfile} rotate={rotate} static={false} navigate={navigate} goback={goback} img={navigateImg}/>
       <Header/>
       <Envs toggle={toggle} envs={envs}/>
       <div id="upload">
