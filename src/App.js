@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import TakePhoto from './components/takephoto'
 import MainPage from './components/mainpage'
 import my_img from './resources/my.png'
+import NotFound from './components/pagenotfound'
 
 
 
@@ -48,9 +49,7 @@ function App(props) {
           <StyledButton left onClick={toggle} src={my_img}></StyledButton>
           {/*<Canvas/>*/}
           <Route className="route" exact path="/" component={MainPage} />
-          <Route className="route" path="/photo" component={TakePhoto} />
-          <Route className="route" path="/animation" component={Animation} />
-          <Route className="route" path="/canvas" component={MainPage} />
+          <Route className="route" path="/notfound" component={NotFound} />
         </Router>
       </div>
 

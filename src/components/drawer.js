@@ -114,22 +114,22 @@ const DrawerItems = [
   {
     title: "错题集",
     pic: one,
-    link: "/"
+    link: "/notfound"
   },
   {
     title: "评分记录",
     pic: two,
-    link: "/"
+    link: "/notfound"
   },
   {
     title: "单词集",
     pic: three,
-    link: "/"
+    link: "/notfound"
   },
   {
     title: "设置",
     pic: four,
-    link: "/"
+    link: "/notfound"
   },
 
 ]
