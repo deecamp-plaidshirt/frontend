@@ -12,6 +12,7 @@ import up_mask from '../resources/upmask.png'
 import {withRouter} from 'react-router-dom'
 import EXIF from 'exif-js';
 import Canvas from './newcanvas'
+import back_img from '../resources/back.png'
 
 const Header = styled(function Head(props){
   return(
@@ -62,35 +63,50 @@ const Header = styled(function Head(props){
 
 const envs = [
   {
-    content: "hello",
+    content: {
+      title: "评分记录",
+      text: "7-29 得分：90分"
+    },
     off_x: 5.5,
     w: 6,
     h: 4.5,
     rotate:30
   },
   {
-    content: "wsf",
+    content: {
+      title: "评分记录",
+      text: "7-30 得分：85分"
+    },
     off_x: -5.5,
     w: 5.5,
     h: 4,
     rotate:-30
   },
   {
-    content: "helsflo",
+    content: {
+      title: "评分记录",
+      text: "8-1 得分：90分"
+    },
     off_x: 4.5,
     w: 5,
     h: 3.5,
     rotate:30
   },
   {
-    content: "sdfd",
+    content: {
+      title: "评分记录",
+      text: "8-5 得分：90分"
+    },
     off_x: -3.5,
     w: 4.5,
     h: 3.2,
     rotate:-30
   },
   {
-    content: "qew",
+    content: {
+      title: "评分记录",
+      text: "8-8 得分：95分"
+    },
     off_x: 3,
     w: 4,
     h: 2.8,
@@ -117,6 +133,7 @@ const WaitingMask =  styled((props)=>{
   const sendImg = async ()=>{
     setuploading(true)
 
+    //const base_url = 'https://jupyter-uaitrain-bj2.ucloud.cn:443/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
     const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
     let tmp = props.img
     let tmpimg = new window.Image();
@@ -313,7 +330,7 @@ const Navigator = styled((props)=>{
   return(
     <div className={props.className} >
       <div id="goback">
-        <h1 onClick={goback}>{"<-"}</h1>
+        <img src={back_img} alt="back" onClick={goback}/>
         <h3>Photo page Navigator</h3>       
       </div>
       <div id="navcanvas">
@@ -341,11 +358,13 @@ const Navigator = styled((props)=>{
     justify-content: center;
     left: 1rem;
     border-bottom: solid thin black;
-    h1{
+    img{
       position: fixed;
       margin: 0;
       left: 0;
       top: 0.5rem;
+      width: 3rem;
+      height: 3rem;
     }
   }
   #navcanvas{
@@ -456,6 +475,9 @@ function MainPage(props){
 
   const openDrawer = (content)=> {
     setopen(!open)
+    if(!content){
+      content={title: "", text: ""}
+    }
     setcontent(content)
     setfopen(false)
   }
@@ -475,7 +497,7 @@ function MainPage(props){
     setnavigate(true)
     setNavigateImg(img)
     setRects(rects)
-    console.log('forward',rects)
+    //console.log('forward',rects)
   }
 
   const checkRotation = ()=> {

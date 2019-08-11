@@ -2,8 +2,23 @@ import React from 'react'
 import styled from 'styled-components'
 import EXIF from 'exif-js';
 import { Stage, Layer, Circle, Image, Group, Rect } from 'react-konva';
+import useImage from 'use-image';
 import Konva from 'konva'
+import resieze_img from '../resources/resize.png'
 
+
+const ResizeImg = (props) => {
+  const [image] = useImage(resieze_img);
+  return <Image image={image} 
+  x={10}
+  y={10}
+  width={30}
+  height={30}
+  onTap={props.canMove}
+  onClick={props.canMove}
+  fill="#f4ba1b"
+  />;
+};
 
 class Canvas extends React.Component{
 
@@ -128,7 +143,7 @@ class Canvas extends React.Component{
   canMove = ()=>{
     this.setState({
       activate: !this.state.activate,
-      opacity: this.state.activate?0.5:1
+      opacity: this.state.activate?0.8:1
     })
     //setactivate(!activate)
     //setopacity(activate?0.5:1)
@@ -207,7 +222,7 @@ class Canvas extends React.Component{
                   y={item[1]}
                   width={(item[2]-item[0])}
                   height={(item[7]-item[1])}
-                  fill="green"
+                  fill="#f4ba1b"
                   key={item}
                   onClick={this.showCard}
                   onTap={this.showCard}
@@ -216,24 +231,8 @@ class Canvas extends React.Component{
               )
             })
             }
-            <Rect
-              x={100}
-              y={100}
-              width={500}
-              height={50}
-              fill="green"
-              opacity={1}
-            />
           </Group>
-          { !this.props.static && <Rect
-            x={10}
-            y={10}
-            width={50}
-            height={50}
-            onTap={this.canMove}
-            onClick={this.canMove}
-            fill='red'
-          />}
+          { !this.props.static && <ResizeImg  canMove={this.canMove} />}
         </Layer>
       </Stage>
     )

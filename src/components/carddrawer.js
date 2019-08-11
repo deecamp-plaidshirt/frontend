@@ -25,7 +25,7 @@ function Header(props){
   return(
     <div className={props.className}>
       <p onClick={toggle}>X</p>
-      <h2>Drawer</h2>
+      <h2>{props.title}</h2>
       <p onClick={fullopen}>O</p>
     </div>
   )
@@ -128,8 +128,8 @@ function Drawer(props){
 
   return(
     <div onClick={stop} className={props.className}>
-      <SHeader fullopen={props.fullopen} toggle={toggle}/>
-      <Content clicked={toggle} >{props.content}</Content>
+      <SHeader fullopen={props.fullopen} toggle={toggle} title={props.content.title}/>
+      <Content clicked={toggle} >{props.content.text}</Content>
     </div>
   )
 }
