@@ -6,11 +6,13 @@ import EXIF from 'exif-js';
 const Title = styled.h3`
   color: #666;
   margin-bottom: 6px;
+  font-size: 4rem;
 `;
 
 const Content = styled.p`
   color: #666;
   margin: 0;
+  font-size: 1.4rem;
 `;
 
 function Header(props){

@@ -147,13 +147,17 @@ const WaitingMask =  styled((props)=>{
     const res = await post(base_url+'img', param, {
       headers:{'Content-Type':'multipart/form-data'}
     })
+
+    console.log(res.data)
+    let data = JSON.parse(res.data.data)
+    console.log(data)
     //console.log(res.data.data)
-    setrects(res.data.data)
+    setrects(data)
 
     props.cancel()
     //console.log("before forward", rects)
-    props.forward(props.img, res.data.data)
-
+    props.forward(props.img, data)
+    
     /*
     setTimeout(() => {
       setuploading(false)

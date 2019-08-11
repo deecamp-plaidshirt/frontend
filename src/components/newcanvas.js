@@ -149,9 +149,12 @@ class Canvas extends React.Component{
     //setopacity(activate?0.5:1)
   }
 
-  showCard = (e) => {
-    const target = e.target
-    this.props.toggle(`${target.attrs.x}-${target.attrs.y}-${target.attrs.width}-${target.attrs.height}`)
+  showCard = (text) => {
+    //const target = e.target
+    this.props.toggle({
+      title: "翻译结果",
+      text: text
+    })
     //console.log("show card")
 
   }
@@ -218,14 +221,14 @@ class Canvas extends React.Component{
             this.props.rects && this.props.rects.map((item, index)=>{
               return(
                 <Rect
-                  x={item[0]}
-                  y={item[1]}
-                  width={(item[2]-item[0])}
-                  height={(item[7]-item[1])}
+                  x={item.pos[1]}
+                  y={item.pos[0]}
+                  width={item.pos[3]}
+                  height={item.pos[2]}
                   fill="#f4ba1b"
-                  key={item}
-                  onClick={this.showCard}
-                  onTap={this.showCard}
+                  key={index}
+                  onClick={()=>this.showCard(item.word)}
+                  onTap={()=>this.showCard(item.word)}
                   opacity={0.5}
                 />
               )
