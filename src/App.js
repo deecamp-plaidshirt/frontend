@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import './App.css';
 import Animation from './components/animation'
 import { animated } from 'react-spring'
@@ -10,8 +10,9 @@ import TakePhoto from './components/takephoto'
 import MainPage from './components/mainpage'
 import my_img from './resources/my.png'
 import NotFound from './components/pagenotfound'
-
-
+import secret from './secret.js'
+import {get, post} from './utils/api'
+import md5 from 'js-md5'
 
 
 const StyledButton = styled.img`
@@ -60,6 +61,35 @@ function App(props) {
 function Viewpager(prop) {
   const index = useRef(0)
   const [open, setopen] = useState(false)
+
+
+  const translate = async ()=>{
+    console.log(secret)
+    let appKey = secret.appid;
+    let key = secret.apikey;
+    let salt = (new Date).getTime();
+    let query = 'text';
+    var from = 'en';
+    var to = 'zh';
+    var str1 = appKey + query + salt +key;
+    var sign = md5(str1);
+    const res = await post('http://openapi.youdao.com/api', {
+      q: query,
+      appKey: appKey,
+      salt: salt,
+      from: from,
+      to: to,
+      sign: sign
+  }, {
+      headers:{'Content-Type':'application/json'}
+    })
+
+    console.log(res)
+
+  }
+  useEffect(()=>{
+    //translate()
+  })
 
   const openDrawer = ()=>{
     //console.log("open Drawer")

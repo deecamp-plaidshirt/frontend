@@ -256,7 +256,7 @@ const Envs = styled((props)=>{
           )
         })
       }
-    <img alt="line" src={line_img}></img>
+    <img id="annoyline" alt="line" src={line_img}></img>
     </div>
   )
 })`
@@ -278,11 +278,15 @@ const Envs = styled((props)=>{
     height: 10vh;
     transform: translateY(-3rem);
   }
+  #annoyline{
+    z-index: -10;
+  }
 `;
 
 const StyledUpload = styled.div`
-  font-size: 20px;
+  font-size: 1.2rem;
   width: 200px;
+  height: 40px;
   background-color: white;
   display:inline-block;
   padding:0.3em 1.2em;
