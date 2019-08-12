@@ -227,8 +227,8 @@ class Canvas extends React.Component{
                   height={item.pos[2]}
                   fill="#f4ba1b"
                   key={index}
-                  onClick={()=>this.showCard(item.word)}
-                  onTap={()=>this.showCard(item.word)}
+                  onClick={()=>this.showCard(`${item.word}:${item.trans}`)}
+                  onTap={()=>this.showCard(`${item.word}:${item.trans}`)}
                   opacity={0.5}
                 />
               )

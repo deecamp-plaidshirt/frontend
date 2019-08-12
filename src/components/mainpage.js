@@ -13,6 +13,14 @@ import {withRouter} from 'react-router-dom'
 import EXIF from 'exif-js';
 import Canvas from './newcanvas'
 import back_img from '../resources/back.png'
+import secret from '../secret.js'
+import md5 from 'js-md5'
+import qs from 'qs'
+import axios from 'axios'
+import better from '../resources/better.png'
+
+//const base_url = 'https://jupyter-uaitrain-bj2.ucloud.cn:443/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
+const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
 
 const Header = styled(function Head(props){
   return(
@@ -126,15 +134,12 @@ const envMask = styled((props)=>{
 `;
 
 const WaitingMask =  styled((props)=>{
-
+  props.opentrans()
   const [isUploading, setuploading] = useState(false)
   const [rects, setrects] = useState(undefined)
 
   const sendImg = async ()=>{
     setuploading(true)
-
-    //const base_url = 'https://jupyter-uaitrain-bj2.ucloud.cn:443/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
-    const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
     let tmp = props.img
     let tmpimg = new window.Image();
     tmpimg.src = tmp;
@@ -157,6 +162,7 @@ const WaitingMask =  styled((props)=>{
     props.cancel()
     //console.log("before forward", rects)
     props.forward(props.img, data)
+    setuploading(false)
     
     /*
     setTimeout(() => {
@@ -169,6 +175,42 @@ const WaitingMask =  styled((props)=>{
   }
 
 
+  const finalProcess = async ()=>{
+    props.opencorr()
+    setuploading(true)
+    let tmp = props.img
+    let tmpimg = new window.Image();
+    tmpimg.src = tmp;
+    //let file = e.target.files[0];           
+    let param = new FormData(); //创建form对象
+    param.append('file',props.imgFile);//通过append向form对象添加数据
+    param.append('chunk','0');//添加form表单中其他数据
+    //console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
+
+    const res = await post(base_url+'img', param, {
+      headers:{'Content-Type':'multipart/form-data'}
+    })
+
+    console.log(res.data)
+    let data = JSON.parse(res.data.data)
+    console.log(data)
+    //console.log(res.data.data)
+    setrects(data)
+
+    props.cancel()
+    //console.log("before forward", rects)
+    props.forward(props.img, data)
+    setuploading(false)
+    
+    /*
+    setTimeout(() => {
+      setuploading(false)
+      props.cancel()
+      props.forward(props.img)
+      //props.history.push(`/photo`)
+    }, 3000);
+    */
+  }
   return(
     <div className={props.className}>
       {isUploading && <div id="upmask"><img src={up_mask} alt="uplaodmask"></img></div>}
@@ -178,7 +220,7 @@ const WaitingMask =  styled((props)=>{
               />
       <div>
         <StyledButton onClick={()=>sendImg()}>翻译</StyledButton>
-        <StyledButton primary onClick={()=>sendImg()}>批改</StyledButton>
+        <StyledButton primary onClick={()=>finalProcess()}>批改</StyledButton>
       </div>
     </div>
   )
@@ -329,7 +371,15 @@ const SDDrawer = styled(DDrawer)`
 const Navigator = styled((props)=>{
 
   const toggle  =(content)=>{
-    props.toggle(content)
+    props.toggle({
+      title: content.title,
+      text: content.text,
+      trans: true 
+    })
+  }
+
+  const betterone = ()=>{
+    props.openBetter()
   }
 
   const goback = ()=>{
@@ -339,11 +389,12 @@ const Navigator = styled((props)=>{
     <div className={props.className} >
       <div id="goback">
         <img src={back_img} alt="back" onClick={goback}/>
-        <h3>Photo page Navigator</h3>       
+        {props.trans?<h3>翻译结果</h3>:<h3>批改结果</h3>     }  
       </div>
       <div id="navcanvas">
-        <Canvas  toggle={toggle} rects={props.rects} width={window.innerWidth} height={window.innerHeight*0.9} rotate={props.rotate} img_url={props.img}/>
-      </div>
+        <Canvas isTrans={props.trans}  toggle={toggle} rects={props.rects} width={window.innerWidth} height={window.innerHeight*0.9} rotate={props.rotate} img_url={props.img}/>
+      </div>  
+      {!props.trans&&<img id="better" alt="better" onClick={betterone} src={better}></img>}
     </div>
   )
 })`
@@ -364,6 +415,7 @@ const Navigator = styled((props)=>{
     background-color: rgba(244,186,27,1);
     font-size: 1rem;
     justify-content: center;
+    align-items:center;
     left: 1rem;
     border-bottom: solid thin black;
     img{
@@ -382,12 +434,39 @@ const Navigator = styled((props)=>{
     object-fit: contain;
     background-color: rgba(244,186,27,1);
   }
+  #better{
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 4rem;
+    height: 4rem;
+    object-fit: contain;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 2rem;
+  }
 `;
 
-function MainPage(props){
-  //const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
-  const base_url = 'http://106.14.5.161:8081/ocr/'
+const BetterPage = styled((props)=>{
+  const open=()=>{
+    props.openBetter()
+  }
+  return(
+    <div className={props.className}>
+      <h2>对结果不满意吗？</h2>
+      <h2>试试高级引擎吧！</h2>
+      <StyledButton onClick={open}>点击尝试</StyledButton>
+    </div>
+  )
+})`
+  height: 50vh;
+  width: 100%;
+  transform: translateY(50vh);
+  z-index: 2000;
+  background-color: rgba(255,255,255,0.9);
+`;
 
+
+function MainPage(props){
   const [url, setUrl] = useState("")
   const [rotate, setrotate] = useState(0)
   let [image, setImage] = useState("")
@@ -476,16 +555,38 @@ function MainPage(props){
   const [navigate, setnavigate] = useState(false)
   const [navigateImg, setNavigateImg] = useState('')
   const [rects, setRects] = useState(undefined)
+  const [better, setBetter] = useState(false)
+  const [trans, settrans] = useState(true)
 
   const toggle = (content)=>{
     openDrawer(content)
   }
+  
+    // translate
+    const translate = (text)=>{
+      //console.log(secret)
+      axios.post(base_url+'trans', {
+        text: text,
+      }, {
+        headers:{'Content-Type':'multipart/form-data'}
+      }).then(res=>{
+        console.log(res)
+        return null
+      })
+  
+    }
 
   const openDrawer = (content)=> {
     setopen(!open)
     if(!content){
       content={title: "", text: ""}
     }
+    else{
+      if(content.trans){
+
+      }
+    }
+
     setcontent(content)
     setfopen(false)
   }
@@ -515,12 +616,26 @@ function MainPage(props){
     })
   }
 
+  const openBetter = ()=>{
+    console.log("open Better")
+    setBetter(!better)
+  }
+
+  const opentrans = ()=>{
+    settrans(true)
+  }
+
+  const opencorr = ()=>{
+    settrans(false)
+  }
+
 //"https://cdn.pixabay.com/photo/2016/06/18/17/42/image-1465348_960_720.jpg"
   return(
     <div className={props.className}>
       <SDDrawer fullopen={fullopen} content={content} fopened={fopen?"fopen":undefined} opened={open?"open":undefined} toggle={toggle}/>
-      <WaitingMaskWithRouter imgFile={imgfile} static={true} rotate={rotate} img={url} uploading={uploading} cancel={cancel} forward={forward}/>
-      <Navigator toggle={toggle} rects={rects} imgFile={imgfile} rotate={rotate} static={false} navigate={navigate} goback={goback} img={navigateImg}/>
+      <WaitingMaskWithRouter opentrans={opentrans} opencorr={opencorr} imgFile={imgfile} static={true} rotate={rotate} img={url} uploading={uploading} cancel={cancel} forward={forward}/>
+      <Navigator isTrans={trans} openBetter={openBetter} toggle={toggle} rects={rects} imgFile={imgfile} rotate={rotate} static={false} navigate={navigate} goback={goback} img={navigateImg}/>
+      {better&&<BetterPage openBetter={openBetter}/>}
       <Header/>
       <Envs toggle={toggle} envs={envs}/>
       <div id="upload">
