@@ -157,7 +157,7 @@ const WaitingMask =  styled((props)=>{
         setuploading(false)
       }
       else{
-        let data = res.data
+        let data = JSON.parse(res.data.data)
         //console.log(data)
         //console.log(res.data.data)
         setrects(data)
@@ -544,7 +544,9 @@ function MainPage(props){
   const [uploading, setuploading] = useState(false)
   const [needmask, setneedmask] = useState(true)
   const [navigate, setnavigate] = useState(false)
+  const [Anavigate, setAnavigate] = useState(false)
   const [navigateImg, setNavigateImg] = useState('')
+  const [AnavigateImg, setANavigateImg] = useState('')
   const [rects, setRects] = useState(undefined)
   const [better, setBetter] = useState(false)
   const [trans, settrans] = useState(true)
@@ -593,21 +595,25 @@ function MainPage(props){
   }
   const goback = ()=>{
     setnavigate(false)
+    setAnavigate(false)
   }
   const forward = (img, rects)=>{
-    setnavigate(true)
+    
+    setNavigateImg("")
     console.log("current mode: ",trans)
     if(!rects.name){
+      setnavigate(true)
       console.log("trans")
       setNavigateImg(img)
       settrans(true)
       setRects(rects)
     }
     else{
+      setAnavigate(true)
       let imgpath = rects.name
       console.log(base_url+'static/'+imgpath)
       console.log('corr')
-      setNavigateImg(base_url+'static/'+imgpath)
+      setANavigateImg(base_url+'static/'+imgpath)
       settrans(false)
       setRects(rects.data[0])
       setallrects(rects.data)
@@ -632,24 +638,6 @@ function MainPage(props){
   const openBetter = async ()=>{
     console.log("open Better")
     setBetter(!better)
-    //props.opencorr()
-    /*
-    setuploading(true)
-    let tmp = props.img
-    let tmpimg = new window.Image();
-    tmpimg.src = tmp;
-    //let file = e.target.files[0];           
-    let param = new FormData(); //创建form对象
-    param.append('file',props.imgFile);//通过append向form对象添加数据
-    param.append('chunk','0');//添加form表单中其他数据
-    //console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
-
-    const res = await post(base_url+'pipe', param, {
-      headers:{'Content-Type':'multipart/form-data'}
-    })
-    let data = res.data
-    setrects(data)
-    */
   }
 
   const opentrans = ()=>{
@@ -672,6 +660,7 @@ function MainPage(props){
       <SDDrawer fullopen={fullopen} content={content} fopened={fopen?"fopen":undefined} opened={open?"open":undefined} toggle={toggle}/>
       <WaitingMaskWithRouter  innav clear={clear} opentrans={opentrans} opencorr={opencorr} imgFile={imgfile} static={true} rotate={rotate} img={url} uploading={uploading} cancel={cancel} forward={forward}/>
       <Navigator trans={trans}  openBetter={openBetter} toggle={toggle} rects={rects} imgFile={imgfile} rotate={rotate} static={false} navigate={navigate} goback={goback} img={navigateImg}/>
+      <Navigator trans={trans}  openBetter={openBetter} toggle={toggle} rects={rects} imgFile={imgfile} rotate={rotate} static={false} navigate={Anavigate} goback={goback} img={AnavigateImg}/>
       {better&&<BetterPage openBetter={boom}/>}
       <Header/>
       <Envs toggle={toggle} envs={envs}/>
