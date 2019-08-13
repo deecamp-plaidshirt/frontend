@@ -19,8 +19,8 @@ import qs from 'qs'
 import axios from 'axios'
 import better from '../resources/better.png'
 
-//const base_url = 'https://jupyter-uaitrain-bj2.ucloud.cn:443/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
-const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
+const base_url = 'https://jupyter-uaitrain-bj2.ucloud.cn:443/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
+//const base_url = 'http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/'
 
 const Header = styled(function Head(props){
   return(
@@ -134,11 +134,11 @@ const envMask = styled((props)=>{
 `;
 
 const WaitingMask =  styled((props)=>{
-  props.opentrans()
   const [isUploading, setuploading] = useState(false)
   const [rects, setrects] = useState(undefined)
 
   const sendImg = async ()=>{
+    props.clear()
     setuploading(true)
     let tmp = props.img
     let tmpimg = new window.Image();
@@ -149,25 +149,34 @@ const WaitingMask =  styled((props)=>{
     param.append('chunk','0');//添加form表单中其他数据
     //console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
 
-    const res = await post(base_url+'img', param, {
+    axios.post(base_url+'img', param, {
       headers:{'Content-Type':'multipart/form-data'}
+    }).then(res=>{
+      if(res.status!==200){
+        props.cancel()
+        setuploading(false)
+      }
+      else{
+        let data = res.data
+        //console.log(data)
+        //console.log(res.data.data)
+        setrects(data)
+    
+        props.cancel()
+        //console.log("before forward", rects)
+        props.forward(props.img, data)
+        setuploading(false)
+      }
+    }).catch(err=>{
+      props.cancel()
+      setuploading(false)
     })
-
-    console.log(res.data)
-    let data = JSON.parse(res.data.data)
-    console.log(data)
-    //console.log(res.data.data)
-    setrects(data)
-
-    props.cancel()
-    //console.log("before forward", rects)
-    props.forward(props.img, data)
-    setuploading(false)
 
   }
 
 
   const finalProcess = async ()=>{
+    props.clear()
     props.opencorr()
     setuploading(true)
     let tmp = props.img
@@ -178,27 +187,37 @@ const WaitingMask =  styled((props)=>{
     param.append('file',props.imgFile);//通过append向form对象添加数据
     param.append('chunk','0');//添加form表单中其他数据
     //console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
-
-    const res = await post(base_url+'pipexf', param, {
+    axios.post(base_url+'pipeenh', param, {
       headers:{'Content-Type':'multipart/form-data'}
+    }).then(res=>{
+      if(res.status!==200){
+        props.cancel()
+        setuploading(false)
+      }
+      else{
+        let data = res.data
+        //console.log(data)
+        //console.log(res.data.data)
+        setrects(data)
+    
+        props.cancel()
+        //console.log("before forward", rects)
+        props.forward(props.img, data)
+        setuploading(false)
+      }
+    }).catch(err=>{
+      props.cancel()
+      setuploading(false)
     })
+    //console.log(res.data)
+    //let data = JSON.parse(res.data)
 
-    console.log(res.data)
-    let data = JSON.parse(res.data.data)
-    console.log(data)
-    //console.log(res.data.data)
-    setrects(data)
-
-    props.cancel()
-    //console.log("before forward", rects)
-    props.forward(props.img, data)
-    setuploading(false)
 
   }
   return(
     <div className={props.className}>
       {isUploading && <div id="upmask"><img src={up_mask} alt="uplaodmask"></img></div>}
-      <Canvas width={window.innerWidth * 0.95} height={window.innerHeight*0.75} static={props.static} 
+      <Canvas innav={props.innav} width={window.innerWidth * 0.95} height={window.innerHeight*0.75} static={props.static} 
               id="load-img" rotate={props.rotate} img_url={props.img}
               //rects={rects}
               />
@@ -376,7 +395,7 @@ const Navigator = styled((props)=>{
         {props.trans?<h3>翻译结果</h3>:<h3>批改结果</h3>     }  
       </div>
       <div id="navcanvas">
-        <Canvas isTrans={props.trans}  toggle={toggle} rects={props.rects} width={window.innerWidth} height={window.innerHeight*0.9} rotate={props.rotate} img_url={props.img}/>
+        <Canvas trans={props.trans}  toggle={toggle} rects={props.rects} width={window.innerWidth} height={window.innerHeight*0.9} rotate={props.rotate} img_url={props.img}/>
       </div>  
       {!props.trans&&<img id="better" alt="better" onClick={betterone} src={better}></img>}
     </div>
@@ -455,24 +474,11 @@ function MainPage(props){
   const [rotate, setrotate] = useState(0)
   let [image, setImage] = useState("")
   const [imgfile, setFile] = useState(undefined)
-  const handleChange = ()=>{
-    
-    //console.log("photo")
-  }
 
   const uploadFile = async ({file})=>{
-    //cancel()
-    //console.log(file)
     let tmp = URL.createObjectURL(file)
     setUrl(tmp)
-    //console.log(tmp)
-
     cancel(true)
-    
-    //const res = await get('http://106.75.34.228:82/infer-a4b9c6a7-30b2-4159-8cbb-1a8897768e28/')
-    //console.log(res)
-    //URL.revokeObjectURL(tmp)
-
     EXIF.getData(file, function(){
       var _dataTxt = EXIF.pretty(this);
       var _dataJson = JSON.stringify(EXIF.getAllTags(this));
@@ -487,6 +493,7 @@ function MainPage(props){
           _rotate = 270;
       };
       setrotate(_rotate)
+      console.log("rotation: ",_rotate)
 
       //console.log(_rotate)
       //console.log(_dataJson)
@@ -541,6 +548,7 @@ function MainPage(props){
   const [rects, setRects] = useState(undefined)
   const [better, setBetter] = useState(false)
   const [trans, settrans] = useState(true)
+  const [allrects, setallrects] = useState(undefined)
 
   const toggle = (content)=>{
     openDrawer(content)
@@ -588,9 +596,25 @@ function MainPage(props){
   }
   const forward = (img, rects)=>{
     setnavigate(true)
-    setNavigateImg(img)
-    setRects(rects)
-    //console.log('forward',rects)
+    console.log("current mode: ",trans)
+    if(!rects.name){
+      console.log("trans")
+      setNavigateImg(img)
+      settrans(true)
+      setRects(rects)
+    }
+    else{
+      let imgpath = rects.name
+      console.log(base_url+'static/'+imgpath)
+      console.log('corr')
+      setNavigateImg(base_url+'static/'+imgpath)
+      settrans(false)
+      setRects(rects.data[0])
+      setallrects(rects.data)
+    }
+    
+    
+    console.log('forward',rects)
   }
 
   const checkRotation = ()=> {
@@ -600,32 +624,59 @@ function MainPage(props){
     })
   }
 
-  const openBetter = ()=>{
-    console.log("open Better")
+  const boom = ()=>{
+    setRects(allrects[1])
     setBetter(!better)
   }
 
+  const openBetter = async ()=>{
+    console.log("open Better")
+    setBetter(!better)
+    //props.opencorr()
+    /*
+    setuploading(true)
+    let tmp = props.img
+    let tmpimg = new window.Image();
+    tmpimg.src = tmp;
+    //let file = e.target.files[0];           
+    let param = new FormData(); //创建form对象
+    param.append('file',props.imgFile);//通过append向form对象添加数据
+    param.append('chunk','0');//添加form表单中其他数据
+    //console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
+
+    const res = await post(base_url+'pipe', param, {
+      headers:{'Content-Type':'multipart/form-data'}
+    })
+    let data = res.data
+    setrects(data)
+    */
+  }
+
   const opentrans = ()=>{
+    console.log("set trans")
     settrans(true)
   }
 
   const opencorr = ()=>{
+    console.log("clear trans")
     settrans(false)
+  }
+
+  const clear = ()=>{
+    setRects(undefined)
   }
 
 //"https://cdn.pixabay.com/photo/2016/06/18/17/42/image-1465348_960_720.jpg"
   return(
     <div className={props.className}>
       <SDDrawer fullopen={fullopen} content={content} fopened={fopen?"fopen":undefined} opened={open?"open":undefined} toggle={toggle}/>
-      <WaitingMaskWithRouter opentrans={opentrans} opencorr={opencorr} imgFile={imgfile} static={true} rotate={rotate} img={url} uploading={uploading} cancel={cancel} forward={forward}/>
-      <Navigator trans={trans} openBetter={openBetter} toggle={toggle} rects={rects} imgFile={imgfile} rotate={rotate} static={false} navigate={navigate} goback={goback} img={navigateImg}/>
-      {better&&<BetterPage openBetter={openBetter}/>}
+      <WaitingMaskWithRouter  innav clear={clear} opentrans={opentrans} opencorr={opencorr} imgFile={imgfile} static={true} rotate={rotate} img={url} uploading={uploading} cancel={cancel} forward={forward}/>
+      <Navigator trans={trans}  openBetter={openBetter} toggle={toggle} rects={rects} imgFile={imgfile} rotate={rotate} static={false} navigate={navigate} goback={goback} img={navigateImg}/>
+      {better&&<BetterPage openBetter={boom}/>}
       <Header/>
       <Envs toggle={toggle} envs={envs}/>
       <div id="upload">
         <Upload 
-          
-          onChange={handleChange}
           showUploadList={false}
           customRequest={uploadFile}
         >

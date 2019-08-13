@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import EXIF from 'exif-js';
-import { Stage, Layer, Circle, Image, Group, Rect } from 'react-konva';
+import { Stage, Layer, Circle, Image, Group, Rect, Text, Tag, Label} from 'react-konva';
 import useImage from 'use-image';
 import Konva from 'konva'
 import resieze_img from '../resources/resize.png'
@@ -99,7 +99,9 @@ class Canvas extends React.Component{
   //rotateAroundCenter(rect, 180);
 
   fitStage = ()=> {
-    this.rotateAroundCenter(this.imgEle, this.props.rotate)
+    if(this.props.innav || this.props.trans){
+      this.rotateAroundCenter(this.imgEle, this.props.rotate)
+    }
     if(this.props.static){
       let grpw = this.group.width(), grph = this.group.height()
       let scaleX =  grpw / this.state.imgw
@@ -218,7 +220,7 @@ class Canvas extends React.Component{
               ref={node => this.imgEle = node }
             />
             {
-              this.props.isTrans ? 
+              this.props.trans ? 
             (this.props.rects && this.props.rects.map((item, index)=>{
               return(
                 <Rect
@@ -236,17 +238,41 @@ class Canvas extends React.Component{
             })):
             (this.props.rects && this.props.rects.map((item, index)=>{
               return(
+                <React.Fragment key={index}>
                 <Rect
-                  x={item.pos[1]}
-                  y={item.pos[0]}
-                  width={item.pos[3]}
-                  height={item.pos[2]}
+                  x={item.pos[0]}
+                  y={item.pos[1]}
+                  width={item.pos[2]}
+                  height={item.pos[3]}
                   fill="#f4ba1b"
-                  key={index}
-                  onClick={()=>this.showCard(`${item.word}:${item.trans}`)}
-                  onTap={()=>this.showCard(`${item.word}:${item.trans}`)}
                   opacity={0.5}
                 />
+                <Label
+                  x={item.pos[0] + item.pos[2]/2}
+                  y={item.pos[1]}
+                  opacity={1}
+                >
+                <Tag
+                    fill="#f4ba1b"
+                    pointerDirection='down'
+                    pointerWidth={10}
+                    pointerHeight={10}
+                    lineJoin='round'
+                    shadowColor='black'
+                    shadowBlur={10}
+                    shadowOffset={10}
+                    shadowOpacity={0.5}
+                  >
+                  </Tag>
+                  <Text
+                      fill='white'
+                      text={"得分："+item.grade.toFixed(2)+" | "+item.res}
+                      fontSize={30}
+                      fontFamily='Calibri'
+                      padding={5}
+                  />
+                </Label>
+                </React.Fragment>
               )
             }))
             }
@@ -266,3 +292,24 @@ const SCanvas = styled(Canvas)`
 
 
 export default SCanvas
+
+/*                  <Tag
+                    fill="#f4ba1b"
+                    pointerDirection='down'
+                    pointerWidth={10}
+                    pointerHeight={10}
+                    lineJoin='round'
+                    shadowColor='black'
+                    shadowBlur={10}
+                    shadowOffset={10}
+                    shadowOpacity={0.5}
+                  >
+                    <Text
+                      fill='white'
+                      text={item.grade.toFixed(1)+" "+item.res}
+                      fontSize={30}
+                      fontFamily='Calibri'
+                      padding={5}
+                    />
+                  </Tag>
+                  */
