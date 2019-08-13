@@ -218,7 +218,8 @@ class Canvas extends React.Component{
               ref={node => this.imgEle = node }
             />
             {
-            this.props.rects && this.props.rects.map((item, index)=>{
+              this.props.isTrans ? 
+            (this.props.rects && this.props.rects.map((item, index)=>{
               return(
                 <Rect
                   x={item.pos[1]}
@@ -232,7 +233,22 @@ class Canvas extends React.Component{
                   opacity={0.5}
                 />
               )
-            })
+            })):
+            (this.props.rects && this.props.rects.map((item, index)=>{
+              return(
+                <Rect
+                  x={item.pos[1]}
+                  y={item.pos[0]}
+                  width={item.pos[3]}
+                  height={item.pos[2]}
+                  fill="#f4ba1b"
+                  key={index}
+                  onClick={()=>this.showCard(`${item.word}:${item.trans}`)}
+                  onTap={()=>this.showCard(`${item.word}:${item.trans}`)}
+                  opacity={0.5}
+                />
+              )
+            }))
             }
           </Group>
           { !this.props.static && <ResizeImg  canMove={this.canMove} />}

@@ -163,15 +163,7 @@ const WaitingMask =  styled((props)=>{
     //console.log("before forward", rects)
     props.forward(props.img, data)
     setuploading(false)
-    
-    /*
-    setTimeout(() => {
-      setuploading(false)
-      props.cancel()
-      props.forward(props.img)
-      //props.history.push(`/photo`)
-    }, 3000);
-    */
+
   }
 
 
@@ -187,7 +179,7 @@ const WaitingMask =  styled((props)=>{
     param.append('chunk','0');//添加form表单中其他数据
     //console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
 
-    const res = await post(base_url+'img', param, {
+    const res = await post(base_url+'pipexf', param, {
       headers:{'Content-Type':'multipart/form-data'}
     })
 
@@ -201,15 +193,7 @@ const WaitingMask =  styled((props)=>{
     //console.log("before forward", rects)
     props.forward(props.img, data)
     setuploading(false)
-    
-    /*
-    setTimeout(() => {
-      setuploading(false)
-      props.cancel()
-      props.forward(props.img)
-      //props.history.push(`/photo`)
-    }, 3000);
-    */
+
   }
   return(
     <div className={props.className}>
@@ -634,7 +618,7 @@ function MainPage(props){
     <div className={props.className}>
       <SDDrawer fullopen={fullopen} content={content} fopened={fopen?"fopen":undefined} opened={open?"open":undefined} toggle={toggle}/>
       <WaitingMaskWithRouter opentrans={opentrans} opencorr={opencorr} imgFile={imgfile} static={true} rotate={rotate} img={url} uploading={uploading} cancel={cancel} forward={forward}/>
-      <Navigator isTrans={trans} openBetter={openBetter} toggle={toggle} rects={rects} imgFile={imgfile} rotate={rotate} static={false} navigate={navigate} goback={goback} img={navigateImg}/>
+      <Navigator trans={trans} openBetter={openBetter} toggle={toggle} rects={rects} imgFile={imgfile} rotate={rotate} static={false} navigate={navigate} goback={goback} img={navigateImg}/>
       {better&&<BetterPage openBetter={openBetter}/>}
       <Header/>
       <Envs toggle={toggle} envs={envs}/>
